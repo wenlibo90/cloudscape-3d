@@ -85,6 +85,7 @@ npm run dev
 
 ## 说明
 
-- 大体积模型资源不纳入版本控制：`public/**/*.glb` 与 `public/su7/` 已在 `.gitignore` 中排除
+- 大体积模型资源不纳入版本控制：`public/**/*.glb` 已在 `.gitignore` 中排除
+- `public/su7/`（整车模型及贴图）已纳入版本控制
 - 大模型密钥仅在后端读取，前端不打包任何凭据
 - 模型许可统一标注为「Sketchfab 授权」

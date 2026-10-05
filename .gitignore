@@ -50,4 +50,3 @@ vendor/
 
 # 大体积模型资源（不纳入版本控制）
 public/**/*.glb
-public/su7/

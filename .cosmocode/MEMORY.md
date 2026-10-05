@@ -153,5 +153,5 @@ Git 提交排除大体积模型资源
 - Category: 工作流协作
 - Instructions:
   - `public/` 目录下所有 `.glb` 模型文件不纳入版本控制
-  - `public/su7/` 整个文件夹不纳入版本控制
   - 上述规则已写入 `.gitignore`，后续所有 `git add` / 提交均不包含这些文件
+  - 2026-10-05 更新：`public/su7/` 已改为纳入版本控制（用户调整要求）
