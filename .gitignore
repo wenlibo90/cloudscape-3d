@@ -1,0 +1,53 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE & editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+\#*\#
+
+# Build outputs
+build/
+dist/
+out/
+target/
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.class
+*.o
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+*.secret
+*.pem
+*.key
+credentials.json
+
+# Logs
+*.log
+logs/
+
+# Dependencies
+vendor/
+
+# 大体积模型资源（不纳入版本控制）
+public/**/*.glb
+public/su7/

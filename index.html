@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#07090d" />
+    <title>Cloudscape 3D · 智能体工作台</title>
+    <meta name="description" content="基于 COSMO Code 的 3D 解决方案，通过对话生成 3D 模型。" />
+  </head>
+  <body>
+    <svg style="display: none" aria-hidden="true">
+      <symbol id="logo-mark" viewBox="0 0 120 120">
+        <ellipse cx="60" cy="104" rx="40" ry="10" fill="#9c7a38" />
+        <ellipse cx="60" cy="98" rx="40" ry="10" fill="#c9a45c" />
+        <polygon points="60,18 84,32 60,46 36,32" fill="#e3c98f" />
+        <polygon points="36,32 60,46 60,74 36,60" fill="#c9a45c" />
+        <polygon points="84,32 84,60 60,74 60,46" fill="#9c7a38" />
+        <line x1="60" y1="78" x2="60" y2="88" stroke="#e3c98f" stroke-width="2.4" stroke-dasharray="3 4" opacity="0.85" />
+      </symbol>
+    </svg>
+
+    <div id="app">
+      <canvas id="viewport"></canvas>
+
+      <div class="fx fx-grid" aria-hidden="true"></div>
+      <div class="fx fx-scan" aria-hidden="true"></div>
+      <div class="fx fx-vignette" aria-hidden="true"></div>
+      <span class="corner tl" aria-hidden="true"></span>
+      <span class="corner tr" aria-hidden="true"></span>
+      <span class="corner bl" aria-hidden="true"></span>
+      <span class="corner br" aria-hidden="true"></span>
+
+      <header class="hud-top">
+        <div class="brand">
+          <svg class="logo" viewBox="0 0 120 120" aria-hidden="true"><use href="#logo-mark" /></svg>
+          <span class="brand-text">
+            <span class="brand-name">Cloudscape <em>3D</em></span>
+            <span class="brand-sub">AGENT STUDIO</span>
+          </span>
+        </div>
+        <div class="hud-right">
+          <span class="status"><i></i>智能体在线</span>
+          <a class="ghost-link" href="/logo-candidates.html">设计</a>
+          <a class="ghost-link" href="/gallery.html">模型库</a>
+          <a class="ghost-link" href="/solutions.html">解决方案</a>
+          <!-- 社区页面暂时下线，后续开启入口： <a class="ghost-link" href="/community.html">社区</a> -->
+        </div>
+      </header>
+
+      <aside class="chat" id="chat">
+        <div class="chat-head">
+          <span class="chat-avatar">
+            <svg viewBox="0 0 120 120" aria-hidden="true"><use href="#logo-mark" /></svg>
+          </span>
+          <span class="chat-head-text">
+            <span class="chat-title">
+              3D 生成智能体
+              <a class="beta-badge" href="/gallery.html">Beta</a>
+            </span>
+            <span class="chat-desc">基于 COSMO Code 的 3D 解决方案</span>
+          </span>
+        </div>
+
+        <div class="chat-log" id="chat-log"></div>
+
+        <div class="prompt-panel" id="prompt-panel">
+          <div class="prompt-panel-head">
+            <span class="prompt-panel-title">提示词库</span>
+            <button class="prompt-close" id="prompt-close" type="button">收起</button>
+          </div>
+          <div class="prompt-panel-body" id="prompt-panel-body"></div>
+        </div>
+
+        <div class="chips" id="chips"></div>
+
+        <form class="chat-form" id="chat-form">
+          <input
+            id="chat-input"
+            type="text"
+            placeholder="例如：生成一个蓝色的大立方体"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button type="button" class="chat-mic" id="chat-mic" aria-label="语音输入" title="语音输入">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="9" y="2" width="6" height="12" rx="3" />
+              <path d="M5 10a7 7 0 0 0 14 0" />
+              <line x1="12" y1="17" x2="12" y2="22" />
+            </svg>
+          </button>
+          <button type="submit" id="chat-send">生成</button>
+        </form>
+      </aside>
+
+      <div class="hud-bottom">
+        <div class="stat"><label>当前模型</label><b id="stat-name">—</b></div>
+        <div class="stat"><label>三角面</label><b id="stat-faces">—</b></div>
+        <div class="stat"><label>状态</label><b id="stat-state">待机</b></div>
+      </div>
+
+      <div class="boot" id="boot">
+        <div class="boot-inner">
+          <svg class="boot-logo" viewBox="0 0 120 120" aria-hidden="true"><use href="#logo-mark" /></svg>
+          <div class="boot-title">CLOUDSCAPE 3D</div>
+          <div class="boot-log" id="boot-log"></div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/agent/main.js"></script>
+  </body>
+</html>

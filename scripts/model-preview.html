@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <title>模型库检视 · Cloudscape 3D</title>
+    <style>
+      html, body { margin: 0; height: 100%; overflow: hidden; background: #0a0c10; }
+      canvas { display: block; width: 100%; height: 100%; }
+      .label {
+        position: absolute; transform: translate(-50%, -50%);
+        font-family: -apple-system, 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+        font-size: 12px; color: #cfd4da; white-space: nowrap;
+        background: rgba(10, 12, 16, 0.6); border: 1px solid rgba(255,255,255,0.08);
+        padding: 4px 10px; border-radius: 8px;
+      }
+      .label b { color: #c9a45c; font-weight: 500; }
+    </style>
+  </head>
+  <body>
+    <div id="labels"></div>
+    <script type="module">
+      import * as THREE from 'three';
+      import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+      import { createAppliance, APPLIANCE_IDS } from '/src/models/index.js';
+
+      const NAMES = {
+        fridge: '双门冰箱', washer: '波轮洗衣机', aircon: '窗式空调', tv: '复古电视机',
+        fan: '落地电风扇', radio: '台式收音机', boombox: '双卡收录机', microwave: '微波炉',
+        riceCooker: '电饭煲', kettle: '电热水壶', oven: '台式电烤箱', lamp: '复古台灯',
+        vacuum: '桶式吸尘器', telephone: '转盘电话机', sewingMachine: '老式缝纫机', hairDryer: '电吹风',
+      };
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setPixelRatio(1);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      document.body.appendChild(renderer.domElement);
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0a0c10);
+
+      const pmrem = new THREE.PMREMGenerator(renderer);
+      scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.05).texture;
+      scene.add(new THREE.HemisphereLight(0xc8d6ea, 0x101216, 1.1));
+      const key = new THREE.DirectionalLight(0xffffff, 1.6);
+      key.position.set(4, 9, 6);
+      scene.add(key);
+      const rim = new THREE.DirectionalLight(0x88a8d8, 0.7);
+      rim.position.set(-5, 4, -6);
+      scene.add(rim);
+
+      const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 200);
+      camera.position.set(0, 6.4, 6.6);
+      camera.lookAt(0, 0.7, 0);
+
+      const GAP = 1.5;
+      const COLS = 4;
+      const labelsRoot = document.getElementById('labels');
+      const items = [];
+
+      APPLIANCE_IDS.forEach((id, i) => {
+        const col = i % COLS;
+        const row = Math.floor(i / COLS);
+        const g = createAppliance(id);
+        const box = new THREE.Box3().setFromObject(g);
+        const size = new THREE.Vector3();
+        box.getSize(size);
+        const scale = 1.0 / Math.max(size.y, 0.001);
+        g.scale.setScalar(scale);
+
+        const x = (col - (COLS - 1) / 2) * GAP;
+        const z = (row - 1.5) * GAP;
+        g.position.set(x, 0, z);
+        scene.add(g);
+
+        const el = document.createElement('div');
+        el.className = 'label';
+        el.innerHTML = `<b>${String(i + 1).padStart(2, '0')}</b> ${NAMES[id] || id}`;
+        labelsRoot.appendChild(el);
+        items.push({ el, x, y: 1.18, z });
+      });
+
+      const grid = new THREE.GridHelper(14, 28, 0x30405f, 0x161d29);
+      scene.add(grid);
+
+      const v = new THREE.Vector3();
+      function draw() {
+        for (const it of items) {
+          v.set(it.x, it.y, it.z).project(camera);
+          it.el.style.left = ((v.x * 0.5 + 0.5) * window.innerWidth) + 'px';
+          it.el.style.top = ((-v.y * 0.5 + 0.5) * window.innerHeight) + 'px';
+        }
+        renderer.render(scene, camera);
+      }
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      draw();
+      window.__ready = true;
+    </script>
+  </body>
+</html>

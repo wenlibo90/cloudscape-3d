@@ -1,0 +1,414 @@
+:root {
+  --gold: #c9a45c;
+  --gold-light: #e3c98f;
+  --gold-deep: #7d6633;
+  --text: #ece7dd;
+  --muted: #8d8778;
+  --line: rgba(201, 164, 92, 0.22);
+  --line-gold: rgba(201, 164, 92, 0.45);
+  --line-soft: rgba(255, 255, 255, 0.07);
+  --panel: rgba(14, 14, 18, 0.82);
+  --mono: 'SFMono-Regular', 'SF Mono', Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #05060a;
+  color: var(--text);
+  font-family: 'Noto Sans CJK SC', -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', sans-serif;
+}
+
+#app { position: relative; width: 100%; height: 100%; }
+
+/* ---------------- 背景 ---------------- */
+.bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 62% 46% at 50% 52%, rgba(201, 164, 92, 0.11), transparent 72%),
+    radial-gradient(ellipse 120% 80% at 50% 0%, rgba(110, 88, 44, 0.16), transparent 80%),
+    linear-gradient(180deg, #0a0a0c 0%, #060608 58%, #020203 100%);
+}
+
+.bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(201, 164, 92, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201, 164, 92, 0.045) 1px, transparent 1px);
+  background-size: 58px 58px;
+  mask-image: radial-gradient(80% 70% at 50% 46%, #000 0%, transparent 86%);
+}
+
+#scene {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------------- 顶栏 ---------------- */
+.topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 34px 0;
+  pointer-events: none;
+}
+
+.titles {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-left: 4px;
+  border-left: 3px solid transparent;
+  border-image: linear-gradient(180deg, var(--gold-light), var(--gold), transparent) 1;
+}
+
+.title-line { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+.titles h1 {
+  margin: 0;
+  font-size: clamp(20px, 2.2vw, 28px);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  background: linear-gradient(100deg, #f6f3ec 0%, #e3c98f 36%, #c9a45c 64%, #7d6633 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.titles p {
+  margin: 7px 0 0;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(201, 164, 92, 0.08);
+  color: var(--gold-light);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+}
+
+.live i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold-light);
+  box-shadow: 0 0 10px var(--gold-light);
+  animation: blink 1.6s ease-in-out infinite;
+}
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex: 0 0 auto;
+  padding: 9px 17px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 12px;
+  text-decoration: none;
+  pointer-events: auto;
+  backdrop-filter: blur(12px);
+  transition: color 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.back svg { width: 13px; height: 13px; }
+.back:hover { color: var(--gold); border-color: rgba(201, 164, 92, 0.45); transform: translateX(3px); }
+
+/* ---------------- 车型信息卡 ---------------- */
+.car-info {
+  position: absolute;
+  z-index: 9;
+  left: 34px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 200px;
+  padding: 16px 17px;
+  border-radius: 15px;
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(160deg, rgba(22, 22, 26, 0.86), rgba(10, 11, 14, 0.9));
+  backdrop-filter: blur(12px);
+}
+
+.car-name {
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: var(--gold-light);
+}
+
+.car-paint {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 14px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.paint-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.6), inset 0 0 8px rgba(255, 255, 255, 0.18);
+  transition: background 0.3s;
+}
+
+.car-paint b { font-size: 14px; color: var(--text); letter-spacing: 0.06em; }
+
+.car-spec { display: grid; gap: 10px; margin-top: 13px; }
+.car-spec > div { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.car-spec label { font-size: 10.5px; color: var(--muted); }
+.car-spec b { font-family: var(--mono); font-size: 11.5px; color: var(--gold-light); }
+
+/* ---------------- 车漆选择条 ---------------- */
+.paint-bar {
+  position: absolute;
+  z-index: 9;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  padding: 14px 20px 16px;
+  border-radius: 18px;
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(180deg, rgba(20, 20, 24, 0.88), rgba(9, 10, 13, 0.92));
+  backdrop-filter: blur(14px);
+}
+
+.paint-head { display: none; }
+
+.paint-head span { font-size: 12.5px; font-weight: 600; letter-spacing: 0.1em; color: var(--gold-light); }
+.paint-head em { font-style: normal; font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; color: var(--muted); }
+
+.paint-list {
+  display: flex;
+  gap: 10px;
+}
+
+.swatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  width: 66px;
+  padding: 9px 4px 8px;
+  border-radius: 13px;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+}
+
+.swatch:hover { background: rgba(255, 255, 255, 0.05); transform: translateY(-2px); }
+
+.swatch.is-active {
+  border-color: rgba(201, 164, 92, 0.55);
+  background: rgba(201, 164, 92, 0.1);
+}
+
+.swatch-chip {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.22), 0 4px 12px rgba(0, 0, 0, 0.5);
+  transition: box-shadow 0.3s;
+}
+
+.swatch.is-active .swatch-chip {
+  box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.28), 0 0 0 2px rgba(201, 164, 92, 0.5), 0 6px 16px rgba(0, 0, 0, 0.6);
+}
+
+.swatch-name { font-size: 10.5px; letter-spacing: 0.04em; color: var(--muted); white-space: nowrap; }
+.swatch.is-active .swatch-name { color: var(--gold-light); }
+
+/* ---------------- 提示与加载 ---------------- */
+.hint {
+  position: absolute;
+  z-index: 9;
+  left: 34px;
+  bottom: 34px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  opacity: 0.75;
+  transition: opacity 0.6s;
+  pointer-events: none;
+}
+
+/* ---------------- 手势控制 ---------------- */
+.gesture-panel {
+  position: absolute;
+  right: 34px;
+  bottom: 26px;
+  z-index: 11;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: none;
+  touch-action: none;
+}
+
+.gesture-toggle {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  backdrop-filter: blur(14px);
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.gesture-toggle:hover { border-color: var(--line-gold); color: var(--gold-light); }
+
+.gesture-toggle.is-on {
+  color: #1a1408;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  font-weight: 600;
+}
+
+.gesture-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #6c7480;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.gesture-toggle.is-on .gesture-dot {
+  background: #2a1d08;
+  box-shadow: 0 0 8px rgba(42, 29, 8, 0.6);
+  animation: gesture-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes gesture-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+.gesture-view {
+  pointer-events: auto;
+  width: 232px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(14px);
+  overflow: hidden;
+}
+
+.gesture-view video {
+  display: block;
+  width: 100%;
+  height: 132px;
+  object-fit: cover;
+  transform: scaleX(-1);
+  background: #05060a;
+}
+
+.gesture-status {
+  padding: 8px 12px 4px;
+  font-size: 11px;
+  color: var(--gold-light);
+  letter-spacing: 0.06em;
+}
+
+.gesture-perm {
+  margin: 2px 12px 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line-gold);
+  background: rgba(201, 164, 92, 0.12);
+  color: var(--gold-light);
+  font-family: inherit;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.gesture-perm:hover { background: rgba(201, 164, 92, 0.24); }
+
+.gesture-tips {
+  padding: 0 12px 11px;
+  font-size: 10.5px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+
+.hint.is-hidden { opacity: 0; }
+
+.loading {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  background: #040406;
+  transition: opacity 0.5s;
+}
+
+.loading.is-done { opacity: 0; pointer-events: none; }
+
+.loading-ring {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid rgba(201, 164, 92, 0.18);
+  border-top-color: var(--gold-light);
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading span { font-size: 12px; letter-spacing: 0.14em; color: var(--muted); }
+
+/* ---------------- 响应式 ---------------- */
+@media (max-width: 1100px) {
+  .car-info { display: none; }
+  .paint-bar { left: 20px; right: 20px; transform: none; overflow-x: auto; }
+  .hint { display: none; }
+  .gesture-panel { right: 16px; bottom: 16px; }
+  .gesture-view { width: 180px; }
+  .gesture-view video { height: 100px; }
+}

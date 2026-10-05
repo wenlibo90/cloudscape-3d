@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<link rel="icon" type="image/png" href="/favicon.png" />
+<title>Cloudscape 3D · Logo 候选方案</title>
+<style>
+  :root {
+    --ink: #0b0d10;
+    --panel: #14171d;
+    --panel-2: #1a1e25;
+    --line: rgba(255,255,255,0.08);
+    --gold: #c9a45c;
+    --gold-light: #e3c98f;
+    --gold-dark: #9c7a38;
+    --blue: #4a7dbd;
+    --text: #f1efe9;
+    --muted: #9aa1ab;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html {
+    min-height: 100%;
+    background-color: #08090b;
+    background-image: radial-gradient(circle at 50% 0%, #16191f 0%, #08090b 70%);
+    background-repeat: no-repeat;
+  }
+  body {
+    min-height: 100vh;
+    color: var(--text);
+    font-family: 'Noto Sans CJK SC', 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    padding: 54px 56px 64px;
+  }
+  header { margin-bottom: 40px; display: flex; align-items: center; gap: 18px; }
+  header h1 { font-size: 24px; font-weight: 700; letter-spacing: 0.06em; }
+  header .sub { font-size: 12px; color: var(--muted); letter-spacing: 0.3em; }
+  .head-actions { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  header .tag {
+    font-size: 11px; color: var(--gold);
+    border: 1px solid rgba(201,164,92,0.35); border-radius: 999px;
+    padding: 6px 14px; letter-spacing: 0.16em; white-space: nowrap;
+  }
+  header .back {
+    display: inline-flex; align-items: center; gap: 7px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 12px;
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 999px;
+    padding: 8px 16px;
+    background: rgba(12,15,20,0.6);
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  header .back svg { width: 13px; height: 13px; }
+  header .back:hover { color: var(--gold); border-color: rgba(201,164,92,0.4); }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap:30px 22px; }
+  .card {
+    background: linear-gradient(160deg, var(--panel-2) 0%, var(--panel) 100%);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 26px 26px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::after {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 20% -10%, rgba(201,164,92,0.10), transparent 55%);
+    pointer-events: none;
+  }
+  .idx {
+    position: absolute; top: 18px; right: 22px;
+    font-size: 11px; letter-spacing: 0.2em; color: #5a616b;
+  }
+  .lockup { display: flex; align-items: center; gap: 18px; min-height: 96px; }
+  .mark { flex: 0 0 auto; }
+  .wm-en { font-size: 21px; font-weight: 700; letter-spacing: 0.02em; line-height: 1.15; }
+  .wm-en .three-d { color: var(--gold); margin-left: 2px; }
+  .wm-cn { font-size: 11.5px; color: var(--muted); letter-spacing: 0.24em; margin-top: 7px; }
+  .name {
+    margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--line);
+    font-size: 13px; font-weight: 500; letter-spacing: 0.04em;
+  }
+  .desc { margin-top: 7px; font-size: 11.5px; color: var(--muted); line-height: 1.75; }
+  .swatches { display: flex; gap: 6px; margin-top: 14px; }
+  .sw { width: 14px; height: 14px; border-radius: 4px; }
+
+  /* 最终选用方案标注 */
+  .card.is-selected {
+    border-color: rgba(201, 164, 92, 0.55);
+    box-shadow: 0 0 0 1px rgba(201, 164, 92, 0.22), 0 20px 50px rgba(0, 0, 0, 0.5),
+      0 0 46px rgba(201, 164, 92, 0.12);
+  }
+  .card.is-selected::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px; z-index: 2;
+    background: linear-gradient(90deg, var(--gold-light), var(--gold) 58%, transparent);
+  }
+  .card.is-selected .idx { top: 56px; }
+  .picked {
+    position: absolute; top: 16px; right: 20px; z-index: 2;
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.18em;
+    color: #1a1408; padding: 5px 13px; border-radius: 999px;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    box-shadow: 0 8px 20px rgba(201, 164, 92, 0.3);
+  }
+  .picked-note {
+    margin-top: 13px; padding: 9px 13px; border-radius: 10px;
+    font-size: 11px; line-height: 1.65; letter-spacing: 0.02em;
+    color: var(--gold-light);
+    border: 1px solid rgba(201, 164, 92, 0.34);
+    background: rgba(201, 164, 92, 0.1);
+  }
+  @media (max-width: 720px) {
+    body { padding: 32px 22px 44px; }
+    header { flex-wrap: wrap; gap: 12px; }
+    .head-actions { width: 100%; }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Cloudscape 3D</h1>
+    <span class="sub">Design Candidates</span>
+    <div class="head-actions">
+      <a class="back" href="/">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+        返回工作台
+      </a>
+      <span class="tag">Design · 设计方案</span>
+    </div>
+  </header>
+
+  <div class="grid">
+
+    <!-- 01 -->
+    <div class="card">
+      <div class="idx">01</div>
+      <div class="lockup">
+        <div class="mark">
+          <svg width="72" height="72" viewBox="0 0 120 120">
+            <polygon points="60,18 102,42 60,66 18,42" fill="#e3c98f"/>
+            <polygon points="18,42 60,66 60,112 18,88" fill="#c9a45c"/>
+            <polygon points="102,42 102,88 60,112 60,66" fill="#9c7a38"/>
+            <path d="M36 43 q8 -10 15 -3 q5 -8 13 -2 q9 -5 13 5" fill="none" stroke="#0b0d10" stroke-width="4" stroke-linecap="round" opacity="0.62"/>
+          </svg>
+        </div>
+        <div>
+          <div class="wm-en">Cloudscape<span class="three-d">3D</span></div>
+          <div class="wm-cn">云 境 · 数 字 展 厅</div>
+        </div>
+      </div>
+      <div class="name">云立方 Cloud Cube</div>
+      <div class="desc">等距立方体承载一朵云纹，最直接地表达 3D 空间与云端。识别度高，缩放后依然清晰。</div>
+      <div class="swatches">
+        <span class="sw" style="background:#e3c98f"></span>
+        <span class="sw" style="background:#c9a45c"></span>
+        <span class="sw" style="background:#9c7a38"></span>
+      </div>
+    </div>
+
+    <!-- 02 -->
+    <div class="card">
+      <div class="idx">02</div>
+      <div class="lockup">
+        <div class="mark">
+          <svg width="72" height="72" viewBox="0 0 120 120">
+            <rect x="18" y="18" width="84" height="84" rx="7" fill="none" stroke="#c9a45c" stroke-width="5"/>
+            <rect x="43" y="43" width="34" height="34" rx="4" fill="#4a7dbd"/>
+            <line x1="18" y1="18" x2="43" y2="43" stroke="#c9a45c" stroke-width="2.6" opacity="0.75"/>
+            <line x1="102" y1="18" x2="77" y2="43" stroke="#c9a45c" stroke-width="2.6" opacity="0.75"/>
+            <line x1="18" y1="102" x2="43" y2="77" stroke="#c9a45c" stroke-width="2.6" opacity="0.75"/>
+            <line x1="102" y1="102" x2="77" y2="77" stroke="#c9a45c" stroke-width="2.6" opacity="0.75"/>
+          </svg>
+        </div>
+        <div>
+          <div class="wm-en">Cloudscape<span class="three-d">3D</span></div>
+          <div class="wm-cn">云 境 · 数 字 展 厅</div>
+        </div>
+      </div>
+      <div class="name">透视展厅 Perspective Hall</div>
+      <div class="desc">外框与内框形成纵深透视，像一条展厅走廊。中间的蓝色方块是可被看见的焦点展品。</div>
+      <div class="swatches">
+        <span class="sw" style="background:#c9a45c"></span>
+        <span class="sw" style="background:#4a7dbd"></span>
+        <span class="sw" style="background:#f1efe9"></span>
+      </div>
+    </div>
+
+    <!-- 03 -->
+    <div class="card">
+      <div class="idx">03</div>
+      <div class="lockup">
+        <div class="mark">
+          <svg width="72" height="72" viewBox="0 0 120 120">
+            <rect x="22" y="34" width="58" height="58" rx="12" fill="#2b3a56"/>
+            <rect x="34" y="28" width="58" height="58" rx="12" fill="#4a7dbd" opacity="0.9"/>
+            <rect x="46" y="22" width="58" height="58" rx="12" fill="#c9a45c"/>
+          </svg>
+        </div>
+        <div>
+          <div class="wm-en">Cloudscape<span class="three-d">3D</span></div>
+          <div class="wm-cn">云 境 · 数 字 展 厅</div>
+        </div>
+      </div>
+      <div class="name">层叠展厅 Layered Halls</div>
+      <div class="desc">三层错位叠放，表达多个展厅、多种空间的堆叠与递进，配色自带深浅层次。</div>
+      <div class="swatches">
+        <span class="sw" style="background:#2b3a56"></span>
+        <span class="sw" style="background:#4a7dbd"></span>
+        <span class="sw" style="background:#c9a45c"></span>
+      </div>
+    </div>
+
+    <!-- 04 -->
+    <div class="card is-selected">
+      <span class="picked">最终选用</span>
+      <div class="idx">04</div>
+      <div class="lockup">
+        <div class="mark">
+          <svg width="72" height="72" viewBox="0 0 120 120">
+            <ellipse cx="60" cy="104" rx="40" ry="10" fill="#9c7a38"/>
+            <ellipse cx="60" cy="98" rx="40" ry="10" fill="#c9a45c"/>
+            <polygon points="60,18 84,32 60,46 36,32" fill="#e3c98f"/>
+            <polygon points="36,32 60,46 60,74 36,60" fill="#c9a45c"/>
+            <polygon points="84,32 84,60 60,74 60,46" fill="#9c7a38"/>
+            <line x1="60" y1="78" x2="60" y2="88" stroke="#e3c98f" stroke-width="2.4" stroke-dasharray="3 4" opacity="0.85"/>
+          </svg>
+        </div>
+        <div>
+          <div class="wm-en">Cloudscape<span class="three-d">3D</span></div>
+          <div class="wm-cn">云 境 · 数 字 展 厅</div>
+        </div>
+      </div>
+      <div class="name">悬浮展台 Floating Exhibit</div>
+      <div class="desc">展台上方悬浮立方体，直接呼应博物馆陈列场景，与当前 Demo 的视觉语言一脉相承。</div>
+      <div class="swatches">
+        <span class="sw" style="background:#e3c98f"></span>
+        <span class="sw" style="background:#c9a45c"></span>
+        <span class="sw" style="background:#9c7a38"></span>
+      </div>
+      <div class="picked-note">当前线上工作台与模型库采用的正是这套标志与配色方案。</div>
+    </div>
+
+    <!-- 05 -->
+    <div class="card">
+      <div class="idx">05</div>
+      <div class="lockup">
+        <div class="mark">
+          <svg width="72" height="72" viewBox="0 0 120 120">
+            <path d="M90 38 A36 36 0 1 0 90 82" fill="none" stroke="#9c7a38" stroke-width="12" stroke-linecap="round" transform="translate(4,4)"/>
+            <path d="M90 38 A36 36 0 1 0 90 82" fill="none" stroke="#c9a45c" stroke-width="12" stroke-linecap="round"/>
+            <polygon points="70,52 80,60 70,68 60,60" fill="#4a7dbd"/>
+          </svg>
+        </div>
+        <div>
+          <div class="wm-en">Cloudscape<span class="three-d">3D</span></div>
+          <div class="wm-cn">云 境 · 数 字 展 厅</div>
+        </div>
+      </div>
+      <div class="name">C 形立体 C Mark</div>
+      <div class="desc">以首字母 C 做双层错位弧，形成 3D 厚度。字母型标志易注册、易延展，蓝色菱形是空间焦点。</div>
+      <div class="swatches">
+        <span class="sw" style="background:#c9a45c"></span>
+        <span class="sw" style="background:#9c7a38"></span>
+        <span class="sw" style="background:#4a7dbd"></span>
+      </div>
+    </div>
+
+    <!-- 06 -->
+    <div class="card">
+      <div class="idx">06</div>
+      <div class="lockup">
+        <div class="mark">
+          <svg width="72" height="72" viewBox="0 0 120 120">
+            <path d="M34 80 a16 16 0 0 1 5 -31 a20 20 0 0 1 38 -5 a15 15 0 0 1 17 23 a12 12 0 0 1 -9 13 z"
+              fill="none" stroke="#c9a45c" stroke-width="7" stroke-linejoin="round"/>
+            <line x1="18" y1="96" x2="102" y2="96" stroke="#4a7dbd" stroke-width="5.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="wm-en">Cloudscape<span class="three-d">3D</span></div>
+          <div class="wm-cn">云 境 · 数 字 展 厅</div>
+        </div>
+      </div>
+      <div class="name">云与地平线 Cloud Horizon</div>
+      <div class="desc">一朵描边云 + 一条蓝色地平线，直接对应 Cloudscape 的字面意境。留白多、气质轻，适合长期延展。</div>
+      <div class="swatches">
+        <span class="sw" style="background:#e3c98f"></span>
+        <span class="sw" style="background:#c9a45c"></span>
+        <span class="sw" style="background:#4a7dbd"></span>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

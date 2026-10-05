@@ -1,0 +1,526 @@
+:root {
+  --gold: #c9a45c;
+  --gold-light: #e3c98f;
+  --gold-deep: #9c7a38;
+  --text: #ece7dd;
+  --muted: #8d8778;
+  --line: rgba(201, 164, 92, 0.18);
+  --line-soft: rgba(255, 255, 255, 0.07);
+  --panel: rgba(12, 14, 18, 0.82);
+  --mono: 'SFMono-Regular', 'SF Mono', Menlo, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #000000;
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
+}
+
+#app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+#space {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+/* ---------------- 顶栏 ---------------- */
+.topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px 36px;
+  pointer-events: none;
+}
+
+.titles {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-left: 4px;
+  border-left: 3px solid transparent;
+  border-image: linear-gradient(180deg, var(--gold-light), var(--gold), transparent) 1;
+}
+
+.title-line {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.titles h1 {
+  margin: 0;
+  font-size: clamp(20px, 2.2vw, 28px);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  background: linear-gradient(100deg, #f6f3ec 0%, #e3c98f 36%, #c9a45c 64%, #7d6633 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.titles p {
+  margin: 8px 0 0;
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(201, 164, 92, 0.09);
+  color: var(--gold-light);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  backdrop-filter: blur(10px);
+}
+
+.live i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 10px var(--gold);
+  animation: blink 1.6s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex: 0 0 auto;
+  padding: 9px 17px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  pointer-events: auto;
+  backdrop-filter: blur(12px);
+  transition: color 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.back svg {
+  width: 13px;
+  height: 13px;
+}
+
+.back:hover {
+  color: var(--gold);
+  border-color: rgba(201, 164, 92, 0.45);
+  transform: translateX(3px);
+}
+
+/* ---------------- 行星导航 ---------------- */
+.planet-dock {
+  position: absolute;
+  top: 128px;
+  right: 36px;
+  z-index: 10;
+  width: 204px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: linear-gradient(165deg, rgba(22, 22, 26, 0.9), rgba(10, 11, 14, 0.94));
+  backdrop-filter: blur(16px);
+  overflow: hidden;
+}
+
+.dock-head {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line-soft);
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  color: var(--gold-light);
+}
+
+.dock-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.dock-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.035);
+  transition: background 0.18s, padding-left 0.18s;
+}
+
+.dock-item:hover,
+.dock-item.is-active {
+  background: rgba(201, 164, 92, 0.13);
+  padding-left: 20px;
+}
+
+.dock-thumb {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background-color: transparent;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.dock-name {
+  font-size: 12.5px;
+  color: #cfcabb;
+}
+
+.dock-item.is-active .dock-name {
+  color: var(--gold-light);
+}
+
+/* ---------------- 信息面板 ---------------- */
+.info-panel {
+  position: absolute;
+  top: 128px;
+  left: 36px;
+  bottom: 104px;
+  z-index: 12;
+  width: min(400px, 42vw);
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: linear-gradient(160deg, rgba(24, 23, 24, 0.95), rgba(8, 9, 12, 0.97));
+  backdrop-filter: blur(18px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(201, 164, 92, 0.06);
+  transform: translateX(-26px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+  overflow: hidden;
+}
+
+.info-panel.is-open {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.info-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(420px circle at 8% -6%, rgba(201, 164, 92, 0.12), transparent 60%);
+}
+
+.info-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  border: 1px solid var(--line-soft);
+  background: rgba(10, 10, 12, 0.8);
+  color: var(--text);
+  font-size: 16px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.info-close:hover {
+  color: var(--gold);
+  border-color: rgba(201, 164, 92, 0.45);
+}
+
+.info-scroll {
+  position: relative;
+  height: 100%;
+  overflow-y: auto;
+  padding: 25px 22px 26px;
+}
+
+.info-scroll::-webkit-scrollbar { width: 6px; }
+.info-scroll::-webkit-scrollbar-thumb { background: rgba(201, 164, 92, 0.35); border-radius: 999px; }
+
+.planet-hero {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.planet-orb {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background-color: transparent;
+  background-size: cover;
+  background-position: center;
+}
+
+.planet-hero h2 {
+  margin: 0;
+  font-size: 23px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.planet-hero span {
+  display: block;
+  margin-top: 5px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+}
+
+.planet-type {
+  display: inline-block;
+  margin-top: 13px;
+  padding: 4px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(201, 164, 92, 0.1);
+  color: var(--gold-light);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+
+.planet-desc {
+  margin: 16px 0 0;
+  font-size: 12.5px;
+  line-height: 2;
+  color: #a9a396;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.stat-cell {
+  padding: 11px 13px;
+  border-radius: 12px;
+  border: 1px solid var(--line-soft);
+  background: rgba(255, 255, 255, 0.025);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.stat-cell:hover {
+  border-color: var(--line);
+  background: rgba(201, 164, 92, 0.06);
+}
+
+.stat-cell label {
+  display: block;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.stat-cell b {
+  display: block;
+  margin-top: 5px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.section-title {
+  margin: 22px 0 11px;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: var(--gold-light);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(201, 164, 92, 0.45), transparent);
+}
+
+.fact-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.fact-list li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.85;
+  color: #a09a8d;
+}
+
+.fact-list li::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 9px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px rgba(201, 164, 92, 0.8);
+}
+
+/* ---------------- 控制条 ---------------- */
+.controls {
+  position: absolute;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.45);
+}
+
+.controls button {
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 9px 20px;
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.045);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.controls button:hover {
+  border-color: rgba(201, 164, 92, 0.5);
+  color: var(--gold-light);
+}
+
+.controls button.on {
+  color: #1a1408;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  font-weight: 600;
+}
+
+.controls .speed {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 12px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.controls input[type='range'] {
+  width: 108px;
+  accent-color: var(--gold);
+}
+
+.controls .speed b {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gold-light);
+  min-width: 34px;
+}
+
+.hint {
+  position: absolute;
+  left: 50%;
+  bottom: 86px;
+  transform: translateX(-50%);
+  z-index: 10;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: rgba(141, 135, 120, 0.9);
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+/* ---------------- 加载 ---------------- */
+.loader {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(ellipse 50% 40% at 50% 38%, rgba(201, 164, 92, 0.08), transparent 70%),
+    #000000;
+  transition: opacity 0.6s;
+}
+
+.loader.is-hidden { opacity: 0; pointer-events: none; }
+
+.loader-inner { display: grid; justify-items: center; gap: 18px; }
+
+.loader-ring {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid rgba(201, 164, 92, 0.18);
+  border-top-color: var(--gold);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loader-text {
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+}
+
+@media (max-width: 900px) {
+  .planet-dock { display: none; }
+  .info-panel { left: 14px; right: 14px; top: auto; bottom: 96px; width: auto; max-height: 46vh; }
+  .topbar { flex-wrap: wrap; padding: 16px; }
+  .titles { order: 3; flex-basis: 100%; }
+  .controls { gap: 6px; padding: 7px; }
+  .controls button { padding: 8px 13px; font-size: 11px; }
+  .controls .speed { display: none; }
+}

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#05060a" />
+    <title>社区 · Cloudscape 3D</title>
+    <meta name="description" content="Cloudscape 3D 创作者社区：展示用户生成的 3D 作品，交流建模思路与行业应用。" />
+  </head>
+  <body>
+    <div class="gate" id="gate">
+      <div class="gate-card" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+        <span class="gate-badge">Notice</span>
+        <h2 id="gate-title">社区建设中</h2>
+        <p>由于 UGC 社区资质审核，社区正在建设中</p>
+        <div class="gate-actions">
+          <button class="gate-cancel" id="gate-cancel" type="button">取消</button>
+          <button class="gate-confirm" id="gate-confirm" type="button">确认</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="app">
+      <div class="bg-grid" aria-hidden="true"></div>
+
+      <div class="shell">
+        <header class="topbar">
+          <div class="titles">
+            <div class="title-line">
+              <h1>社区</h1>
+              <span class="live"><i></i>Creator Community</span>
+            </div>
+            <p>Community · 作品广场与在线交流 · 与创作者一起构建 3D 内容</p>
+          </div>
+          <a class="back" href="/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6" /></svg>
+            返回工作台
+          </a>
+        </header>
+
+        <section class="stats" id="stats"></section>
+
+        <div class="layout">
+          <main class="main">
+            <div class="section-head">
+              <h2>作品广场</h2>
+              <div class="tabs" id="tabs"></div>
+            </div>
+            <div class="gallery" id="gallery"></div>
+          </main>
+
+          <aside class="side">
+            <section class="side-card">
+              <h3>交流动态</h3>
+              <div class="feed" id="feed"></div>
+            </section>
+
+            <section class="side-card">
+              <h3>热门标签</h3>
+              <div class="tags" id="tags"></div>
+            </section>
+
+            <section class="side-card">
+              <h3>活跃创作者</h3>
+              <div class="creators" id="creators"></div>
+            </section>
+          </aside>
+        </div>
+
+        <footer class="foot">Cloudscape 3D · 创作者社区 Demo · 数据仅用于演示</footer>
+      </div>
+    </div>
+
+    <script type="module" src="/src/community.js"></script>
+  </body>
+</html>

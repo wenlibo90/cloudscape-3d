@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0d10" />
+    <title>工业零件拆解与组装可视化 · Cloudscape 3D</title>
+    <meta name="description" content="基于航空涡轮发动机模型的工业零件拆解与组装可视化演示，支持爆炸拆解、还原组装与零部件悬停高亮。" />
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="scene"></canvas>
+
+      <header class="topbar">
+        <div class="titles">
+          <div class="title-line">
+            <h1>工业零件拆解与组装可视化</h1>
+          </div>
+          <p>Industrial Assembly Explorer · 涡轮发动机拆解与组装演示</p>
+        </div>
+        <a class="back" href="/">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6" /></svg>
+          返回工作台
+        </a>
+      </header>
+
+      <aside class="panel" id="panel">
+        <div class="panel-head">
+          <span>零部件清单</span>
+          <em id="part-count">—</em>
+        </div>
+        <div class="panel-list" id="part-list"></div>
+        <div class="panel-hint">悬停清单或模型上的部件可高亮定位</div>
+      </aside>
+
+      <div class="gesture-panel" id="gesture-panel">
+        <button class="gesture-toggle" id="gesture-toggle" type="button" aria-pressed="false">
+          <span class="gesture-dot"></span>
+          <span class="gesture-label">手势控制</span>
+        </button>
+        <div class="gesture-view" id="gesture-view" hidden>
+          <video id="gesture-video" playsinline muted></video>
+          <div class="gesture-status" id="gesture-status">正在开启…</div>
+          <button class="gesture-perm" id="gesture-perm" type="button" hidden>申请摄像头权限</button>
+          <div class="gesture-tips">握拳 = 拆解 / 还原 · 移动手掌 = 旋转</div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button id="explode-btn" type="button" class="primary">拆解</button>
+        <button id="reset-btn" type="button">重置视角</button>
+        <button id="rotate-btn" type="button">自动旋转</button>
+      </div>
+
+      <div class="hover-tag" id="hover-tag"></div>
+
+      <div class="loader" id="loader">
+        <div class="loader-box">
+          <div class="loader-title">正在加载涡轮发动机模型…</div>
+          <div class="loader-bar"><span id="loader-progress"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/disassembly.js"></script>
+  </body>
+</html>

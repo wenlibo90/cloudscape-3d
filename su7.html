@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#05060a" />
+    <title>整车在线换色定制 · Cloudscape 3D</title>
+    <meta name="description" content="整车在线换色定制：9 种原厂车漆实时切换，真车数字模型、环境光照与金属漆质感还原。" />
+  </head>
+  <body>
+    <div id="app">
+      <div class="bg" aria-hidden="true"></div>
+      <canvas id="scene"></canvas>
+
+      <header class="topbar">
+        <div class="titles">
+          <div class="title-line">
+            <h1>整车在线换色定制</h1>
+            <span class="live"><i></i>实时预览</span>
+          </div>
+          <p>Vehicle Color Studio · 9 种原厂车漆 · 真车数字模型</p>
+        </div>
+        <a class="back" href="/">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6" /></svg>
+          返回工作台
+        </a>
+      </header>
+
+      <aside class="car-info">
+        <div class="car-name">Xiaomi SU7</div>
+        <div class="car-paint">
+          <span class="paint-dot" id="paint-dot"></span>
+          <b id="paint-name">—</b>
+        </div>
+        <div class="car-spec">
+          <div><label>车漆</label><b id="paint-hex">—</b></div>
+          <div><label>漆面</label><b>金属漆</b></div>
+        </div>
+      </aside>
+
+      <footer class="paint-bar">
+        <div class="paint-head">
+          <span>选择车漆</span>
+          <em id="paint-count">9 种颜色</em>
+        </div>
+        <div class="paint-list" id="paint-list"></div>
+      </footer>
+
+      <div class="hint" id="hint">拖动旋转 · 滚轮缩放 · 点击色卡切换车漆</div>
+
+      <div class="gesture-panel" id="gesture-panel">
+        <button class="gesture-toggle" id="gesture-toggle" type="button" aria-pressed="false">
+          <span class="gesture-dot"></span>
+          <span class="gesture-label">手势控制</span>
+        </button>
+        <div class="gesture-view" id="gesture-view" hidden>
+          <video id="gesture-video" playsinline muted></video>
+          <div class="gesture-status" id="gesture-status">正在开启…</div>
+          <button class="gesture-perm" id="gesture-perm" type="button" hidden>申请摄像头权限</button>
+          <div class="gesture-tips">张开手掌左右移动 = 旋转整车 · 握拳 = 切换车漆</div>
+        </div>
+      </div>
+
+      <div class="loading" id="loading">
+        <div class="loading-ring"></div>
+        <span id="loading-text">正在加载车辆模型…</span>
+      </div>
+    </div>
+
+    <script type="module" src="/src/su7.js"></script>
+  </body>
+</html>

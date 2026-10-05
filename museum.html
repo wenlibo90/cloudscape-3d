@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#0b0d10" />
+    <title>海尔世界家电博物馆 · 3D 线上展</title>
+    <meta name="description" content="以 3D 形式在线展出冰山之角海尔世界家电博物馆的老家电经典藏品。" />
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="scene"></canvas>
+
+      <header class="topbar">
+        <div class="titles">
+          <div class="title-line">
+            <h1>海尔世界家电博物馆</h1>
+          </div>
+          <p>Haier World Home Appliance Museum · 3D 线上展</p>
+        </div>
+        <div class="topbar-actions">
+          <a class="ghost-btn back-link" href="/">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6" /></svg>
+            返回工作台
+          </a>
+          <button class="ghost-btn" id="reset-view" type="button">复位视角</button>
+        </div>
+      </header>
+
+      <div class="labels" id="labels"></div>
+
+      <aside class="info-panel" id="info-panel" aria-hidden="true">
+        <button class="close-btn" id="close-panel" type="button" aria-label="关闭">×</button>
+        <div class="info-body" id="info-body"></div>
+      </aside>
+
+      <nav class="dock" id="dock"></nav>
+
+      <div class="keep-note">这是整个项目的第一版，舍不得删，先留着</div>
+
+      <div class="loader" id="loader">
+        <div class="loader-inner">
+          <div class="loader-title">海尔世界家电博物馆</div>
+          <div class="loader-bar"><span id="loader-progress"></span></div>
+          <div class="loader-text" id="loader-text">正在唤醒老物件…</div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

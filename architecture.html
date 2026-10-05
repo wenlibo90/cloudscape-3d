@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#05060a" />
+    <title>中国古建数字展馆 · Cloudscape 3D</title>
+    <meta name="description" content="中国古建数字展馆：以长城为代表的中国古建筑 3D 数字孪生展示，支持自由旋转视角、场景切换与建筑档案查看。" />
+  </head>
+  <body>
+    <div id="app">
+      <div class="bg" aria-hidden="true"></div>
+      <canvas id="scene"></canvas>
+
+      <header class="topbar">
+        <div class="titles">
+          <div class="title-line">
+            <h1>中国古建数字展馆</h1>
+            <span class="live"><i></i>3D Heritage</span>
+          </div>
+          <p>Chinese Architecture Gallery · 古建数字孪生 · 场景持续扩充</p>
+        </div>
+        <a class="back" href="/">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6" /></svg>
+          返回工作台
+        </a>
+      </header>
+
+      <aside class="info-panel" id="info-panel">
+        <div class="info-no" id="info-no">01</div>
+        <div class="info-head">
+          <h2 id="info-name">长城</h2>
+          <p id="info-en">Great Wall</p>
+        </div>
+        <div class="info-tags" id="info-tags"></div>
+        <p class="info-desc" id="info-desc"></p>
+        <div class="info-block">
+          <div class="block-title">建筑看点</div>
+          <ul class="info-points" id="info-points"></ul>
+        </div>
+        <div class="info-specs" id="info-specs"></div>
+      </aside>
+
+      <div class="toolbar">
+        <button type="button" class="tb-btn is-on" id="spin-btn">自动旋转</button>
+        <button type="button" class="tb-btn" id="reset-btn">重置视角</button>
+      </div>
+
+      <footer class="dock">
+        <div class="dock-head">
+          <span>建筑典藏</span>
+          <em id="dock-count">1 座</em>
+        </div>
+        <div class="dock-list" id="dock-list"></div>
+      </footer>
+
+      <div class="loading" id="loading">
+        <div class="loading-ring"></div>
+        <span id="loading-text">正在加载建筑模型…</span>
+      </div>
+    </div>
+
+    <script type="module" src="/src/architecture.js"></script>
+  </body>
+</html>

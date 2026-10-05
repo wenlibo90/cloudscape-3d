@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#03040a" />
+    <title>太阳系 · 在线科普 · Cloudscape 3D</title>
+    <meta name="description" content="太阳系八大行星在线科普，真实天体模型、轨道运动模拟与专业数据解读。" />
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="space"></canvas>
+
+      <header class="topbar">
+        <div class="titles">
+          <div class="title-line">
+            <h1>太阳系 · 在线科普</h1>
+            <span class="live"><i></i>Live Simulation</span>
+          </div>
+          <p>Solar System Explorer · 真实天体模型 · 轨道运动模拟</p>
+        </div>
+        <a class="back" href="/">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6" /></svg>
+          返回工作台
+        </a>
+      </header>
+
+      <aside class="planet-dock" id="planet-dock">
+        <div class="dock-head">快速定位</div>
+        <div class="dock-list" id="dock-list"></div>
+      </aside>
+
+      <section class="info-panel" id="info-panel" aria-hidden="true">
+        <button class="info-close" id="info-close" type="button" aria-label="关闭">×</button>
+        <div class="info-scroll" id="info-scroll"></div>
+      </section>
+
+      <div class="controls">
+        <button id="play-btn" type="button" class="on">暂停</button>
+        <div class="speed">
+          <span>速度</span>
+          <input id="speed" type="range" min="0" max="4" step="0.1" value="1" />
+          <b id="speed-val">1.0×</b>
+        </div>
+        <button id="orbit-btn" type="button" class="on">轨道</button>
+      </div>
+
+      <div class="hint" id="hint">拖动旋转 · 滚轮缩放 · 点击行星查看详情</div>
+
+      <div class="loader" id="loader">
+        <div class="loader-inner">
+          <div class="loader-ring"></div>
+          <div class="loader-text">正在构建太阳系…</div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/solar.js"></script>
+  </body>
+</html>
