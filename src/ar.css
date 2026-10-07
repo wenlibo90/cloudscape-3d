@@ -1,0 +1,682 @@
+:root {
+  --gold: #c9a45c;
+  --gold-light: #e3c98f;
+  --gold-deep: #7d6633;
+  --text: #ece7dd;
+  --muted: #8d8778;
+  --line: rgba(201, 164, 92, 0.28);
+  --line-soft: rgba(255, 255, 255, 0.08);
+  --panel: rgba(12, 12, 16, 0.82);
+  --mono: 'SFMono-Regular', 'SF Mono', Menlo, Consolas, monospace;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-t: env(safe-area-inset-top, 0px);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: #05060a;
+  color: var(--text);
+  font-family: 'Noto Sans CJK SC', -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', sans-serif;
+  overscroll-behavior: none;
+}
+
+#app { position: relative; width: 100%; height: 100vh; height: 100dvh; }
+
+/* ---------------- AR 舞台 ---------------- */
+.ar-stage {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  z-index: 1;
+  background: #05060a;
+}
+
+.ar-stage a-scene { width: 100%; height: 100%; }
+
+/* MindAR 摄像头视频与 A-Frame 画布铺满全屏 */
+.ar-stage video {
+  position: absolute !important;
+  top: 0 !important; right: 0 !important; bottom: 0 !important; left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  z-index: 0;
+}
+
+.ar-stage .a-canvas {
+  position: absolute !important;
+  top: 0 !important; right: 0 !important; bottom: 0 !important; left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 1;
+}
+
+/* A-Frame 自带 UI 全部隐藏，改用自定义覆盖层 */
+.a-enter-vr,
+.a-enter-ar,
+.a-loader-title { display: none !important; }
+
+/* ---------------- 通用界面层 ---------------- */
+.ar-ui {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.ar-ui button { pointer-events: auto; font-family: inherit; }
+
+/* ---------------- 启动屏 ---------------- */
+.screen {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: calc(28px + var(--safe-t)) 26px calc(28px + var(--safe-b));
+  pointer-events: auto;
+  text-align: center;
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 22%, rgba(201, 164, 92, 0.16), transparent 70%),
+    linear-gradient(180deg, #0b0b0f 0%, #060608 60%, #020203 100%);
+  transition: opacity 0.5s;
+}
+
+.screen.is-hidden { opacity: 0; pointer-events: none; }
+
+.screen .brand {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.36em;
+  color: var(--gold);
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.screen h1 {
+  margin: 0;
+  font-size: 27px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  background: linear-gradient(100deg, #f6f3ec 0%, #e3c98f 38%, #c9a45c 66%, #7d6633 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.screen .lead {
+  margin: 0;
+  max-width: 300px;
+  font-size: 13px;
+  line-height: 1.9;
+  color: #a9a396;
+}
+
+/* 模拟文博卡（竖版） */
+.relic-card {
+  position: relative;
+  width: min(58vw, 218px);
+  aspect-ratio: 0.7;
+  perspective: 900px;
+  animation: cardFloat 5.6s ease-in-out infinite;
+}
+
+@keyframes cardFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+
+.relic-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 13px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(214, 178, 106, 0.55);
+  background:
+    /* 金属拉丝细纹 */
+    repeating-linear-gradient(118deg, rgba(255, 246, 224, 0.03) 0 1px, transparent 1px 3.5px),
+    /* 金属基底：明暗交错的拉丝金属 */
+    linear-gradient(158deg, #3a352c 0%, #1d1b17 22%, #2a251d 44%, #131216 66%, #201c16 84%, #100f11 100%);
+  box-shadow:
+    0 24px 50px rgba(0, 0, 0, 0.68),
+    inset 0 1px 0 rgba(255, 244, 214, 0.26),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.65),
+    inset 0 0 46px rgba(201, 164, 92, 0.08);
+  transform: rotateX(6deg) rotateY(-7deg);
+  transition: transform 0.55s cubic-bezier(0.2, 0.9, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+/* 金属反光层：斜向高光 + 顶部环境反射 */
+.relic-inner::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  z-index: 2;
+  background:
+    linear-gradient(118deg, transparent 28%, rgba(255, 240, 206, 0.16) 44%, rgba(255, 240, 206, 0.04) 51%, transparent 66%),
+    conic-gradient(from 205deg at 26% 6%, rgba(227, 201, 143, 0.16), transparent 68deg, transparent 296deg, rgba(227, 201, 143, 0.1));
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.relic-card:hover .relic-inner { transform: rotateX(0) rotateY(0); }
+
+.relic-head,
+.relic-art,
+.relic-body,
+.relic-foot {
+  position: relative;
+  z-index: 3;
+}
+
+/* 四角装饰 */
+.relic-corner {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  border: 1px solid rgba(227, 201, 143, 0.55);
+  pointer-events: none;
+}
+
+.relic-corner.tl { top: 6px; left: 6px; border-right: none; border-bottom: none; }
+.relic-corner.tr { top: 6px; right: 6px; border-left: none; border-bottom: none; }
+.relic-corner.bl { bottom: 6px; left: 6px; border-right: none; border-top: none; }
+.relic-corner.br { bottom: 6px; right: 6px; border-left: none; border-top: none; }
+
+.relic-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 4px 0;
+}
+
+.relic-brand {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--gold-light);
+}
+
+.relic-cat {
+  font-family: var(--mono);
+  font-size: 8.5px;
+  letter-spacing: 0.22em;
+  color: rgba(201, 164, 92, 0.75);
+}
+
+.relic-art {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 10px 2px 0;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(227, 201, 143, 0.22);
+}
+
+.relic-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.46;
+  filter: saturate(0.6) brightness(0.82) contrast(1.05);
+}
+
+.relic-art::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  background:
+    radial-gradient(ellipse 80% 70% at 50% 40%, rgba(201, 164, 92, 0.1), transparent 70%),
+    linear-gradient(180deg, rgba(10, 11, 14, 0.35) 0%, transparent 40%, rgba(6, 7, 10, 0.8) 100%);
+}
+
+.relic-body {
+  padding: 10px 4px 0;
+  text-align: center;
+}
+
+.relic-title {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  background: linear-gradient(100deg, #f6f3ec, #e3c98f 46%, #c9a45c);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.relic-en {
+  margin-top: 3px;
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.relic-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 9px 4px 2px;
+  border-top: 1px solid rgba(227, 201, 143, 0.16);
+}
+
+.relic-no {
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.relic-nfc {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  color: var(--gold-light);
+}
+
+.relic-nfc svg { width: 12px; height: 12px; }
+
+.relic-shine {
+  position: absolute;
+  top: -60%;
+  left: -70%;
+  width: 55%;
+  height: 220%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transform: rotate(22deg);
+  animation: cardShine 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes cardShine {
+  0% { left: -70%; opacity: 0; }
+  16% { opacity: 1; }
+  46% { left: 125%; opacity: 0; }
+  100% { left: 125%; opacity: 0; }
+}
+
+.relic-card::after {
+  content: '';
+  position: absolute;
+  top: -1px; right: -1px; bottom: -1px; left: -1px;
+  border-radius: 10px;
+  border: 1px solid rgba(201, 164, 92, 0.5);
+  animation: markerPulse 2.6s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes markerPulse {
+  0% { transform: scale(1); opacity: 0.65; }
+  70% { transform: scale(1.05); opacity: 0; }
+  100% { transform: scale(1.05); opacity: 0; }
+}
+
+.marker-caption {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.btn-primary {
+  min-width: 220px;
+  padding: 15px 30px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  color: #1a1408;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  box-shadow: 0 12px 34px rgba(201, 164, 92, 0.34);
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+
+.btn-primary:active { transform: scale(0.97); box-shadow: 0 6px 20px rgba(201, 164, 92, 0.4); }
+
+.screen .note {
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--muted);
+  opacity: 0.85;
+}
+
+.screen .steps {
+  display: flex;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.screen .steps span {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line-soft);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.screen .steps span b { color: var(--gold-light); font-weight: 600; }
+
+/* ---------------- 扫描提示 ---------------- */
+.scan-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(96px + var(--safe-b));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  transition: opacity 0.35s;
+}
+
+.scan-hint.is-hidden { opacity: 0; }
+
+.scan-frame {
+  position: relative;
+  width: 168px;
+  height: 168px;
+  border-radius: 18px;
+}
+
+.scan-frame span {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--gold-light);
+  border-radius: 4px;
+}
+
+.scan-frame span:nth-child(1) { top: 0; left: 0; border-right: none; border-bottom: none; }
+.scan-frame span:nth-child(2) { top: 0; right: 0; border-left: none; border-bottom: none; }
+.scan-frame span:nth-child(3) { bottom: 0; left: 0; border-right: none; border-top: none; }
+.scan-frame span:nth-child(4) { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+.scan-frame::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+  box-shadow: 0 0 12px rgba(227, 201, 143, 0.8);
+  animation: scanMove 2.2s ease-in-out infinite;
+}
+
+@keyframes scanMove {
+  0%, 100% { top: 8px; }
+  50% { top: calc(100% - 10px); }
+}
+
+.scan-hint p {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: var(--gold-light);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+}
+
+.scan-hint small { font-size: 11px; color: var(--muted); }
+
+/* ---------------- AR 控制条 ---------------- */
+.ar-controls {
+  position: absolute;
+  left: 50%;
+  bottom: calc(18px + var(--safe-b));
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  padding: 9px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--line-soft);
+  background: var(--panel);
+  backdrop-filter: blur(16px);
+  pointer-events: auto;
+  transition: opacity 0.35s, transform 0.35s;
+}
+
+.ar-controls.is-hidden { opacity: 0; transform: translateX(-50%) translateY(14px); pointer-events: none; }
+
+.ctrl {
+  min-width: 52px;
+  padding: 9px 13px;
+  border: 1px solid var(--line-soft);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.ctrl.on {
+  color: #1a1408;
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  font-weight: 600;
+}
+
+.ctrl:active { transform: scale(0.95); }
+
+/* ---------------- 信息卡 ---------------- */
+.ar-info {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: calc(84px + var(--safe-b));
+  padding: 16px 17px;
+  border-radius: 16px;
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(160deg, rgba(20, 20, 24, 0.94), rgba(9, 10, 13, 0.96));
+  backdrop-filter: blur(16px);
+  pointer-events: none;
+  transform: translateY(18px);
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.ar-info.is-show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+.ar-info h3 {
+  margin: 0;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  color: var(--gold-light);
+}
+
+.ar-info .en {
+  margin: 4px 0 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.ar-info .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 11px 0 0; }
+
+.ar-info .tags span {
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(201, 164, 92, 0.08);
+  color: var(--gold-light);
+  font-size: 10.5px;
+}
+
+.ar-info p.desc {
+  margin: 11px 0 0;
+  font-size: 12.5px;
+  line-height: 1.8;
+  color: #c4beb2;
+}
+
+.ar-info .close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* ---------------- 顶部状态 ---------------- */
+.ar-topbar {
+  position: absolute;
+  top: calc(12px + var(--safe-t));
+  left: 14px;
+  right: 14px;
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.ar-topbar .tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--line-soft);
+  background: var(--panel);
+  backdrop-filter: blur(12px);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--gold-light);
+}
+
+.ar-topbar .tag i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6c7480;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.ar-topbar .tag.live i { background: #9bb87a; box-shadow: 0 0 9px #9bb87a; }
+
+.ar-topbar .back {
+  pointer-events: auto;
+  padding: 7px 15px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--muted);
+  font-size: 12px;
+  text-decoration: none;
+  backdrop-filter: blur(12px);
+}
+
+/* ---------------- 模拟 AR ---------------- */
+.sim-canvas {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.sim-canvas[hidden] { display: none; }
+
+.sim-controls {
+  position: absolute;
+  left: 50%;
+  bottom: calc(18px + var(--safe-b));
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+  padding: 9px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--line-soft);
+  background: var(--panel);
+  backdrop-filter: blur(16px);
+  pointer-events: auto;
+}
+
+.sim-controls[hidden] { display: none; }
+
+/* 陀螺仪提示小圆点 */
+.ar-toast {
+  position: absolute;
+  left: 50%;
+  top: calc(84px + var(--safe-t));
+  transform: translate(-50%, -12px);
+  z-index: 15;
+  max-width: min(84vw, 340px);
+  padding: 11px 18px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(14, 14, 18, 0.94);
+  color: var(--gold-light);
+  font-size: 12.5px;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s, transform 0.35s;
+}
+
+.ar-toast.is-show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ---------------- 不支持提示 ---------------- */
+.fallback {
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 30px;
+  text-align: center;
+  background: rgba(4, 4, 6, 0.96);
+  pointer-events: auto;
+}
+
+.fallback[hidden] { display: none; }
+.fallback h2 { margin: 0; font-size: 17px; color: var(--gold-light); letter-spacing: 0.08em; }
+.fallback p { margin: 0; max-width: 280px; font-size: 12.5px; line-height: 1.9; color: var(--muted); }
+.fallback a { color: var(--gold-light); }

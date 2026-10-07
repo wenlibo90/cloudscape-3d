@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AR 标记图生成</title>
+    <style>
+      html, body { margin: 0; background: #e9e4d8; }
+      #c { display: block; width: 1024px; height: 1024px; }
+    </style>
+  </head>
+  <body>
+    <canvas id="c" width="1024" height="1024"></canvas>
+    <script type="importmap">
+      { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+    </script>
+    <script type="module">
+      import * as THREE from 'three';
+      import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
+      import { DRACOLoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/DRACOLoader.js';
+
+      const canvas = document.getElementById('c');
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+      renderer.setSize(1024, 1024, false);
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xe9e4d8);
+
+      // 带纹理的背景板，增加特征点
+      const bg = document.createElement('canvas');
+      bg.width = 1024; bg.height = 1024;
+      const bx = bg.getContext('2d');
+      const g = bx.createLinearGradient(0, 0, 1024, 1024);
+      g.addColorStop(0, '#efe9dc'); g.addColorStop(1, '#cfc6b2');
+      bx.fillStyle = g; bx.fillRect(0, 0, 1024, 1024);
+      for (let i = 0; i < 900; i += 1) {
+        bx.fillStyle = `rgba(90,72,40,${0.03 + Math.random() * 0.09})`;
+        const r = 4 + Math.random() * 46;
+        bx.beginPath();
+        bx.arc(Math.random() * 1024, Math.random() * 1024, r, 0, Math.PI * 2);
+        bx.fill();
+      }
+      bx.strokeStyle = 'rgba(70,55,30,0.16)';
+      bx.lineWidth = 1.4;
+      for (let i = 0; i <= 1024; i += 32) {
+        bx.beginPath(); bx.moveTo(i, 0); bx.lineTo(i, 1024); bx.stroke();
+        bx.beginPath(); bx.moveTo(0, i); bx.lineTo(1024, i); bx.stroke();
+      }
+      const bgTex = new THREE.CanvasTexture(bg);
+      scene.background = bgTex;
+
+      scene.add(new THREE.AmbientLight(0xffffff, 1.1));
+      const key = new THREE.DirectionalLight(0xfff3de, 2.2);
+      key.position.set(4, 7, 6);
+      scene.add(key);
+      const rim = new THREE.DirectionalLight(0x9ab0d4, 0.8);
+      rim.position.set(-6, 3, -5);
+      scene.add(rim);
+
+      const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 200);
+
+      const draco = new DRACOLoader();
+      draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/draco/');
+      const loader = new GLTFLoader();
+      loader.setDRACOLoader(draco);
+
+      loader.load('/architecture/changcheng.glb', (gltf) => {
+        const model = gltf.scene;
+        const box = new THREE.Box3().setFromObject(model);
+        const size = new THREE.Vector3();
+        const center = new THREE.Vector3();
+        box.getSize(size);
+        box.getCenter(center);
+        const maxDim = Math.max(size.x, size.y, size.z) || 1;
+        const scale = 2.6 / maxDim;
+        model.scale.setScalar(scale);
+        const box2 = new THREE.Box3().setFromObject(model);
+        const c2 = new THREE.Vector3();
+        box2.getCenter(c2);
+        model.position.x -= c2.x;
+        model.position.y -= c2.y;
+        model.position.z -= c2.z;
+        model.rotation.y = -0.5;
+        scene.add(model);
+
+        camera.position.set(3.1, 2.2, 3.4);
+        camera.lookAt(0, 0, 0);
+        renderer.render(scene, camera);
+        window.__markerReady = true;
+      }, undefined, (err) => {
+        window.__markerError = String(err && err.message);
+      });
+    </script>
+  </body>
+</html>

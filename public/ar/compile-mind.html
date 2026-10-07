@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>MindAR 目标编译</title>
+  </head>
+  <body>
+    <script type="module">
+      import './mindar/mindar-image.prod.js';
+
+      window.__compile = async (src) => {
+        const compiler = new window.MINDAR.IMAGE.Compiler();
+        const img = new Image();
+        img.src = src;
+        await img.decode();
+        await compiler.compileImageTargets([img], (p) => {
+          window.__progress = p;
+        });
+        const buffer = await compiler.exportData();
+        return Array.from(new Uint8Array(buffer));
+      };
+
+      window.__ready = true;
+    </script>
+  </body>
+</html>
