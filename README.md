@@ -74,7 +74,7 @@ Cloudscape 3D 是一套完整的「前端多页面应用 + Node 服务端 + 大�
 
 平台采用前后端分离的三层架构：浏览器端负责三维渲染与交互，Node 服务端负责大模型代理与资源清单管理，大模型服务负责语义理解与内容生成。
 
-```mermaid
+```text
 graph TD
   A["浏览器端 多页面应用"] --> B["Vite 构建产物 dist"]
   A --> C["Node 服务端 :3001"]
@@ -121,7 +121,7 @@ graph TD
 
 渲染管线需同时兼容 Draco 压缩、Meshopt 压缩、量化网格与 WebP 贴图四种扩展，任一环节缺失都会导致模型加载失败或几何错位。
 
-```mermaid
+```text
 graph LR
   A["GLTFLoader"] --> B["DRACOLoader"]
   A --> C["MeshoptDecoder"]
@@ -152,7 +152,7 @@ graph LR
 
 工作台（`index.html`）是平台的核心交互入口，接收自然语言描述并生成三维场景。生成过程按成本递增分为四级流水线。
 
-```mermaid
+```text
 graph TD
   A["用户自然语言输入"] --> B{"内置模型直通？"}
   B -->|命中单一模型| C["本地直通 约 0.3s"]
@@ -206,7 +206,7 @@ graph TD
 
 **处理链路**
 
-```mermaid
+```text
 graph LR
   A["getUserMedia 摄像头"] --> B["video 元素"]
   B --> C["MediaPipe Hands"]
