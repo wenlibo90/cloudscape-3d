@@ -37,6 +37,8 @@ export default defineConfig({
         solutions: resolve(import.meta.dirname, 'solutions.html'),
         su7: resolve(import.meta.dirname, 'su7.html'),
         architecture: resolve(import.meta.dirname, 'architecture.html'),
+        ar: resolve(import.meta.dirname, 'ar.html'),
+        model: resolve(import.meta.dirname, 'model.html'),
       },
     },
   },

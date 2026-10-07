@@ -307,6 +307,7 @@ viewerControls.autoRotateSpeed = 0.9;
 
 let viewerModel = null;
 let viewerRaf = 0;
+let currentViewer = null;
 
 function resizeViewer() {
   const w = viewerCanvas.clientWidth;
@@ -339,14 +340,32 @@ function startViewerLoop() {
 }
 
 function setViewerInfo(item) {
+  const sub = document.getElementById('viewer-sub');
+  const tags = document.getElementById('viewer-tags');
+  if (sub) sub.textContent = item.category || '3D 模型';
   viewerDesc.textContent = item.description || '该模型暂未提供中文描述。';
+
+  if (tags) {
+    tags.innerHTML = '';
+    const rows = [
+      ['分类', item.category || '—'],
+      ['体积', item.size ? `${(item.size / 1024 / 1024).toFixed(2)} MB` : '—'],
+    ];
+    rows.forEach(([k, v]) => {
+      const span = document.createElement('span');
+      span.innerHTML = `${k} <b>${v}</b>`;
+      tags.appendChild(span);
+    });
+  }
 }
 
 async function openViewer(item) {
+  currentViewer = item;
   viewerEl.classList.add('is-open');
   viewerName.textContent = item.title || item.name;
   setViewerInfo(item);
   requestAnimationFrame(resizeViewer);
+  requestAnimationFrame(() => updateQrCard(item));
 
   const cached = gltfCache.has(item.url);
 
@@ -430,9 +449,115 @@ document.querySelector('.viewer-tools [data-act="fullscreen"]').addEventListener
   else viewerEl.requestFullscreen?.();
 });
 
+
+
 document.getElementById('viewer-close').addEventListener('click', closeViewer);
+
+/* ---------------- 手机扫码查看该模型 ---------------- */
+const viewerQrEl = document.getElementById('viewer-qr');
+const vqrCta = document.getElementById('vqr-cta');
+const vqrCode = document.getElementById('vqr-code');
+const vqrCanvas = document.getElementById('qr-canvas-sm');
+
+let qrLibPromise = null;
+function loadQrLib() {
+  if (!qrLibPromise) {
+    qrLibPromise = import('qrcode-generator').then((m) => m.default || m);
+  }
+  return qrLibPromise;
+}
+
+function qrRoundRect(ctx, x, y, w, h, rad) {
+  const r = Math.min(rad, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function modelUrl(item) {
+  return `${window.location.origin}/model.html?m=${encodeURIComponent(item.name)}`;
+}
+
+async function renderQrTo(canvas, url, fallback = 188) {
+  const qrcode = await loadQrLib();
+  const qr = qrcode(0, 'M');
+  qr.addData(url);
+  qr.make();
+  const count = qr.getModuleCount();
+
+  const size = canvas.clientWidth || fallback;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.round(size * dpr);
+  canvas.height = Math.round(size * dpr);
+
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.fillStyle = '#f6f0e2';
+  ctx.fillRect(0, 0, size, size);
+
+  const pad = size * 0.055;
+  const cell = (size - pad * 2) / count;
+  ctx.fillStyle = '#241c0e';
+  for (let row = 0; row < count; row += 1) {
+    for (let col = 0; col < count; col += 1) {
+      if (!qr.isDark(row, col)) continue;
+      qrRoundRect(
+        ctx,
+        pad + col * cell + cell * 0.08,
+        pad + row * cell + cell * 0.08,
+        cell * 0.84,
+        cell * 0.84,
+        cell * 0.3,
+      );
+      ctx.fill();
+    }
+  }
+}
+
+let qrRenderedFor = null;
+
+function collapseQr() {
+  vqrCode.hidden = true;
+  vqrCta.textContent = '显示二维码';
+  viewerQrEl.classList.remove('is-open');
+}
+
+function updateQrCard(item) {
+  if (!item) return;
+  qrRenderedFor = null;
+  collapseQr();
+}
+
+vqrCta.addEventListener('click', async (e) => {
+  e.stopPropagation();
+  if (!currentViewer) return;
+
+  if (!vqrCode.hidden) {
+    collapseQr();
+    return;
+  }
+
+  const url = modelUrl(currentViewer);
+  const urlEl = document.getElementById('vqr-url');
+  if (urlEl) urlEl.textContent = url.replace(/^https?:\/\//, '');
+
+  if (qrRenderedFor !== currentViewer.name) {
+    await renderQrTo(vqrCanvas, url, 114);
+    qrRenderedFor = currentViewer.name;
+  }
+
+  vqrCode.hidden = false;
+  vqrCta.textContent = '收起二维码';
+  viewerQrEl.classList.add('is-open');
+});
+
 window.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeViewer();
+  if (e.key !== 'Escape') return;
+  closeViewer();
 });
 window.addEventListener('resize', () => {
   if (viewerEl.classList.contains('is-open')) resizeViewer();

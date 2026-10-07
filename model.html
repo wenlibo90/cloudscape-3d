@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#05060a" />
+    <title>模型查看 · Cloudscape 3D</title>
+    <meta name="description" content="手机端 3D 模型查看：扫描二维码即可在手机上旋转、缩放查看行业 3D 模型。" />
+  </head>
+  <body>
+    <div id="app">
+      <div class="bg" aria-hidden="true"></div>
+      <canvas id="scene"></canvas>
+
+      <header class="bar">
+        <div class="bar-nav">
+          <!-- 上一个 / 下一个：暂时隐藏，后续如需可移除 hidden -->
+          <button type="button" class="nav-btn" id="nav-prev" aria-label="上一个模型" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6" /></svg>
+          </button>
+          <button type="button" class="nav-btn" id="nav-next" aria-label="下一个模型" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+          </button>
+
+          <button type="button" class="tool-btn" id="reset-view">重置</button>
+          <button type="button" class="tool-btn" id="clear-view">清屏</button>
+        </div>
+        <div class="bar-title">
+          <b id="model-name">—</b>
+          <span id="model-cat"></span>
+        </div>
+      </header>
+
+      <aside class="card" id="card">
+        <div class="card-head">
+          <span id="card-cat">模型档案</span>
+          <button type="button" class="card-toggle" id="card-toggle" aria-label="收起">收起</button>
+        </div>
+        <p id="model-desc">—</p>
+        <div class="card-meta" id="model-meta"></div>
+      </aside>
+
+      <div class="gesture-tip" id="gesture-tip">单指旋转 · 双指缩放 · 左上角可重置 / 清屏</div>
+
+      <button type="button" class="exit-immersive" id="exit-immersive" hidden>退出沉浸</button>
+
+      <div class="loading" id="loading">
+        <div class="ring"></div>
+        <span id="loading-text">载入模型…</span>
+      </div>
+
+      <div class="error" id="error" hidden>
+        <b>模型加载失败</b>
+        <p id="error-text">请返回案例库重新扫码</p>
+        <a href="/gallery.html">返回案例库</a>
+      </div>
+    </div>
+
+    <script type="module" src="/src/model.js"></script>
+  </body>
+</html>

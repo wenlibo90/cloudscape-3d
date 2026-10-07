@@ -95,6 +95,7 @@ async function listModels() {
     const rawName = entry.name.replace(/\.glb$/i, '');
     const meta = readGlbMeta(filePath, entry.name, stat.mtimeMs, stat.size);
     const override = catalog[rawName] || {};
+    if (override.hidden === true) continue;
 
     files.push({
       name: rawName,
