@@ -279,7 +279,7 @@ function focusCamera(index) {
   const lookY = p.centerY;
   const bias = window.innerWidth > 900 ? 0.28 : 0;
   targetGoal.set(p.x + bias, lookY, p.z);
-  cameraGoal.set(p.x, lookY + 0.38, p.z + p.focusDistance);
+  cameraGoal.set(p.x, lookY + p.focusDistance * 0.16, p.z + p.focusDistance);
   animating = true;
   controls.autoRotate = false;
 }
@@ -435,12 +435,16 @@ function loadProduct(product, index) {
         model.userData.productIndex = index;
         scene.add(model);
 
+        // 按外接球半径计算聚焦距离：各模型聚焦后的视觉大小更均衡
+        const radius = 0.5 * Math.hypot(size.x, size.y, size.z) || 1;
+        const fitDist = (radius / Math.sin((camera.fov * Math.PI) / 360)) * 1.12;
+
         placements[index] = {
           x: layout.x,
           z: layout.z,
           topY: PEDESTAL_HEIGHT + size.y,
-          centerY: PEDESTAL_HEIGHT + size.y * 0.52,
-          focusDistance: 1.55 + size.y * 0.35,
+          centerY: PEDESTAL_HEIGHT + size.y * 0.5,
+          focusDistance: fitDist,
         };
         clickable.push(model);
         loadedCount += 1;

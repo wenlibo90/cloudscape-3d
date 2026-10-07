@@ -12,6 +12,9 @@
     "export:glb": "node scripts/export-glb.js"
   },
   "dependencies": {
+    "@dimforge/rapier3d-compat": "^0.21.0",
+    "mind-ar": "^1.2.5",
+    "qrcode-generator": "^2.0.4",
     "three": "^0.186.1"
   },
   "devDependencies": {

@@ -33,14 +33,6 @@ const SOLUTIONS = [
     href: '/architecture.html',
     cover: '/covers/solutions-04-cover.jpg',
   },
-  {
-    tag: 'Museum',
-    title: '博物馆数字化展陈',
-    desc: '以 3D 形式在线展出经典家电藏品，环绕展台、藏品故事与技术参数结合，可自由漫游展馆。',
-    points: ['线上展馆', '藏品故事', '3D 漫游'],
-    href: '/museum.html',
-    cover: '/covers/potala.png',
-  },
 ];
 
 const el = (tag, className, text) => {
@@ -60,11 +52,11 @@ SOLUTIONS.forEach((item, i) => {
   const media = el('div', 'solution-media');
   const indexTag = el('span', 'solution-index', String(i + 1).padStart(2, '0'));
   if (item.cover) {
-    const img = document.createElement('img');
-    img.src = item.cover;
-    img.alt = item.title;
-    img.loading = 'lazy';
-    media.append(img, indexTag);
+    const bg = el('div', 'solution-media-bg');
+    bg.style.backgroundImage = `url("${item.cover}")`;
+    bg.setAttribute('role', 'img');
+    bg.setAttribute('aria-label', item.title);
+    media.append(bg, indexTag);
   } else {
     media.classList.add('is-empty');
     media.append(el('span', 'solution-empty-mark', item.tag), indexTag);
@@ -94,7 +86,7 @@ const inner = el('div', 'coming-inner');
 inner.append(
   el('div', 'coming-plus', '+'),
   el('div', 'coming-title', '更多解决方案'),
-  el('div', 'coming-desc', 'Cloudscape 3D · 面向更多行业的方案扩展中')
+  el('div', 'coming-desc', 'Cloudscape 3D · 数字孪生、医疗等更多行业方案扩展中')
 );
 coming.appendChild(inner);
 grid.appendChild(coming);

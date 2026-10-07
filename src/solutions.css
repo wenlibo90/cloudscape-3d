@@ -177,20 +177,29 @@ body {
   height: 190px;
   background: #0a0c11;
   overflow: hidden;
+  isolation: isolate;
+  z-index: 0;
 }
 
-.solution-media img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.92;
-  transform: scale(1.004) translateZ(0);
+/* 用背景图渲染封面，避开 img 元素的亚像素边缘问题 */
+.solution-media-bg {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  bottom: -2px;
+  left: -2px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.94;
+  transform: translateZ(0);
   backface-visibility: hidden;
   transition: transform 0.45s, opacity 0.3s;
 }
 
-.solution:hover .solution-media img { transform: scale(1.06) translateZ(0); opacity: 1; }
+.solution:hover .solution-media-bg { transform: scale(1.05) translateZ(0); opacity: 1; }
+
+
 
 .solution-media.is-empty {
   background:
@@ -225,8 +234,29 @@ body {
 .solution-media::after {
   content: '';
   position: absolute;
-  inset: 0;
+  top: 0; right: 0; bottom: -1px; left: 0;
   background: linear-gradient(180deg, transparent 40%, rgba(8, 9, 12, 0.9) 100%);
+  pointer-events: none;
+}
+
+/* 右上角斜标签 */
+.solution-badge {
+  position: absolute;
+  top: 16px;
+  right: -38px;
+  z-index: 4;
+  width: 140px;
+  padding: 6px 0;
+  text-align: center;
+  transform: rotate(45deg);
+  transform-origin: center;
+  background: linear-gradient(135deg, #f0dba8, #c9a45c 78%);
+  color: #1a1408;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 240, 200, 0.3) inset;
+  pointer-events: none;
 }
 
 .solution-index {
@@ -247,10 +277,13 @@ body {
 
 .solution-body {
   position: relative;
+  z-index: 1;
+  margin-top: -1px;
   padding: 18px 20px 20px;
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
+  background: linear-gradient(160deg, rgba(20, 20, 23, 0.86), rgba(10, 11, 14, 0.92));
 }
 
 .solution-tag {
