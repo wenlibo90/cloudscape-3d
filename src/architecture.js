@@ -43,16 +43,18 @@ const BUILDINGS = [
     points: ['洞窟开凿于鸣沙山东麓崖壁', '壁画与彩塑跨越十余个朝代', '藏经洞文献震惊世界'],
     specs: [['现存洞窟', '735 个'], ['壁画', '约 4.5 万㎡'], ['彩塑', '2400 余身']],
   },
+  --- */
   {
     id: 'potala',
     name: '布达拉宫',
     en: 'Potala Palace',
+    src: '/api/models/raw/potala.glb',
+    fitScale: 0.8,
     tags: ['世界文化遗产', '藏式建筑', '拉萨'],
     desc: '始建于公元 7 世纪，坐落于拉萨红山之上，海拔约 3700 米，主楼高 117 米，是藏式宫堡建筑的杰出典范。',
     points: ['红宫与白宫依山叠砌，错落有致', '厚墙窄窗，适应高原气候', '金顶与灵塔构成藏式建筑精华'],
     specs: [['始建', '公元 7 世纪'], ['海拔', '约 3700 m'], ['主楼高', '117 m']],
   },
-  --- */
   /* --- 其他场景模型就绪后，删除成对注释标记即可接入
   {
     id: 'tiantan',
@@ -183,12 +185,12 @@ const els = {
   reset: document.getElementById('reset-btn'),
 };
 
-function fitModel(model) {
+function fitModel(model, fitScale = 1) {
   const box = new THREE.Box3().setFromObject(model);
   const size = new THREE.Vector3();
   box.getSize(size);
   const maxDim = Math.max(size.x, size.y, size.z) || 1;
-  const scale = TARGET / maxDim;
+  const scale = (TARGET * fitScale) / maxDim;
   model.scale.setScalar(scale);
 
   const box2 = new THREE.Box3().setFromObject(model);
@@ -230,6 +232,8 @@ function updatePanel(item, index) {
     div.innerHTML = `<label>${label}</label><b>${value}</b>`;
     els.specs.appendChild(div);
   });
+
+  updateNarrator(item);
 }
 
 function buildDock() {
@@ -257,7 +261,8 @@ function select(id) {
   const item = BUILDINGS[index];
 
   setActive(id);
-  els.panel.classList.add('is-switching');
+  // 立即更新介绍卡片，不等待模型加载
+  updatePanel(item, index);
   controls.autoRotate = false;
 
   if (currentModel) {
@@ -279,7 +284,7 @@ function select(id) {
   currentId = id;
 
   loader.load(
-    `/architecture/${item.id}.glb`,
+    item.src || `/architecture/${item.id}.glb`,
     (gltf) => {
       const model = gltf.scene;
       model.traverse((node) => {
@@ -289,7 +294,7 @@ function select(id) {
         if (node.material) node.material.envMapIntensity = 1.1;
       });
 
-      const info = fitModel(model);
+      const info = fitModel(model, item.fitScale || 1);
       holder.add(model);
       currentModel = model;
 
@@ -301,8 +306,6 @@ function select(id) {
       controls.autoRotate = els.spin.classList.contains('is-on');
       controls.update();
 
-      updatePanel(item, index);
-      els.panel.classList.remove('is-switching');
       els.loading.classList.add('is-done');
     },
     (event) => {
@@ -321,9 +324,7 @@ buildDock();
 
 /* ---------------- 工具栏 ---------------- */
 els.spin.addEventListener('click', () => {
-  const on = !els.spin.classList.contains('is-on');
-  els.spin.classList.toggle('is-on', on);
-  controls.autoRotate = on;
+  setSpin(!controls.autoRotate);
 });
 
 els.reset.addEventListener('click', () => {
@@ -336,9 +337,34 @@ els.reset.addEventListener('click', () => {
   controls.update();
 });
 
-controls.addEventListener('start', () => {
-  controls.autoRotate = false;
-  els.spin.classList.remove('is-on');
+// 点击模型：切换自动旋转；拖动：暂停旋转
+let pointerStart = null;
+let pointerMoved = false;
+
+function setSpin(on) {
+  controls.autoRotate = on;
+  els.spin.classList.toggle('is-on', on);
+}
+
+canvas.addEventListener('pointerdown', (e) => {
+  pointerStart = { x: e.clientX, y: e.clientY };
+  pointerMoved = false;
+});
+
+window.addEventListener('pointermove', (e) => {
+  if (!pointerStart || pointerMoved) return;
+  if (Math.hypot(e.clientX - pointerStart.x, e.clientY - pointerStart.y) > 6) {
+    pointerMoved = true;
+    if (controls.autoRotate) setSpin(false);
+  }
+});
+
+window.addEventListener('pointerup', () => {
+  if (pointerStart && !pointerMoved) {
+    setSpin(!controls.autoRotate);
+  }
+  pointerStart = null;
+  pointerMoved = false;
 });
 
 /* ---------------- 自适应与渲染 ---------------- */
@@ -364,4 +390,156 @@ function animate() {
 }
 
 animate();
+
+/* ---------------- 扫码进入 AR 互动 ---------------- */
+const qrModal = document.getElementById('qr-modal');
+const qrCanvas = document.getElementById('qr-canvas');
+const qrUrlEl = document.getElementById('qr-url');
+const nfcPanel = document.querySelector('.nfc-panel');
+const qrClose = document.getElementById('qr-close');
+
+let qrRendered = false;
+
+function roundRect(ctx, x, y, w, h, rad) {
+  const r = Math.min(rad, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+async function renderQR() {
+  if (qrRendered) return;
+  const mod = await import('qrcode-generator');
+  const qrcode = mod.default || mod;
+
+  const url = `${window.location.origin}/ar.html`;
+  qrUrlEl.textContent = url.replace(/^https?:\/\//, '');
+
+  const qr = qrcode(0, 'M');
+  qr.addData(url);
+  qr.make();
+  const count = qr.getModuleCount();
+
+  const size = qrCanvas.clientWidth || 188;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  qrCanvas.width = Math.round(size * dpr);
+  qrCanvas.height = Math.round(size * dpr);
+
+  const ctx = qrCanvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.fillStyle = '#f6f0e2';
+  ctx.fillRect(0, 0, size, size);
+
+  const pad = size * 0.055;
+  const cell = (size - pad * 2) / count;
+  ctx.fillStyle = '#241c0e';
+  for (let row = 0; row < count; row += 1) {
+    for (let col = 0; col < count; col += 1) {
+      if (!qr.isDark(row, col)) continue;
+      roundRect(
+        ctx,
+        pad + col * cell + cell * 0.08,
+        pad + row * cell + cell * 0.08,
+        cell * 0.84,
+        cell * 0.84,
+        cell * 0.3,
+      );
+      ctx.fill();
+    }
+  }
+  qrRendered = true;
+}
+
+function openQr() {
+  qrModal.hidden = false;
+  renderQR();
+}
+
+function closeQr() {
+  qrModal.hidden = true;
+}
+
+
+if (nfcPanel) nfcPanel.addEventListener('click', () => openQr());
+
+
+qrClose.addEventListener('click', () => closeQr());
+qrModal.querySelector('.qr-mask').addEventListener('click', () => closeQr());
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !qrModal.hidden) closeQr();
+});
+
+
+/* ---------------- 语音播报（档案卡内） ---------------- */
+const voiceBtn = document.getElementById('info-voice');
+
+let narratorBuilding = null;
+let narratorVoice = null;
+
+function pickZhVoice() {
+  const synth = window.speechSynthesis;
+  if (!synth) return null;
+  const voices = synth.getVoices() || [];
+  return voices.find((v) => /^zh/i.test(v.lang))
+    || voices.find((v) => /Chinese|中文|普通话|Putonghua/i.test(v.name))
+    || null;
+}
+
+function buildNarration(item) {
+  const points = Array.isArray(item.points) && item.points.length
+    ? `建筑看点：${item.points.join('；')}。`
+    : '';
+  return `${item.name}。${item.desc}${points}你可以在三维场景中自由旋转、缩放，查看这座建筑的细节。`;
+}
+
+function setNarratorSpeaking(on) {
+  if (!voiceBtn) return;
+  voiceBtn.classList.toggle('is-on', on);
+}
+
+function stopNarration() {
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  setNarratorSpeaking(false);
+}
+
+function speakNarration() {
+  if (!narratorBuilding) return;
+
+  const synth = window.speechSynthesis;
+  if (!synth) return;
+
+  if (synth.speaking) {
+    stopNarration();
+    return;
+  }
+
+  if (!narratorVoice) narratorVoice = pickZhVoice();
+
+  const u = new SpeechSynthesisUtterance(buildNarration(narratorBuilding));
+  u.lang = 'zh-CN';
+  u.rate = 1;
+  u.pitch = 1;
+  if (narratorVoice) u.voice = narratorVoice;
+
+  u.onstart = () => setNarratorSpeaking(true);
+  u.onend = () => setNarratorSpeaking(false);
+  u.onerror = () => setNarratorSpeaking(false);
+
+  synth.speak(u);
+}
+
+function updateNarrator(item) {
+  narratorBuilding = item;
+  stopNarration();
+}
+
+if (voiceBtn) voiceBtn.addEventListener('click', speakNarration);
+if (window.speechSynthesis) {
+  window.speechSynthesis.onvoiceschanged = () => { narratorVoice = pickZhVoice(); };
+}
+
 select(BUILDINGS[0].id);

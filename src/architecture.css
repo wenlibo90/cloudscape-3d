@@ -241,16 +241,58 @@ body {
 .info-specs label { display: block; font-size: 10px; color: var(--muted); }
 .info-specs b { display: block; margin-top: 5px; font-family: var(--mono); font-size: 12.5px; color: var(--gold-light); }
 
+/* 标题旁：语音播报图标 */
+.info-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.voice-icon {
+  position: relative;
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: rgba(201, 164, 92, 0.1);
+  color: var(--gold-light);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.voice-icon:hover { background: rgba(201, 164, 92, 0.22); border-color: var(--line-gold, var(--line)); }
+
+.voice-icon svg { width: 15px; height: 15px; }
+
+.voice-icon.is-on {
+  color: #1a1408;
+  border-color: transparent;
+  background: linear-gradient(135deg, #e3c98f, #c9a45c);
+  animation: voicePulse 1.3s ease-in-out infinite;
+}
+
+@keyframes voicePulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(201, 164, 92, 0.55);
+  }
+  60% {
+    box-shadow: 0 0 0 9px rgba(201, 164, 92, 0);
+  }
+}
+
 /* ---------------- 工具按钮 ---------------- */
 .toolbar {
   position: absolute;
   z-index: 9;
-  right: 34px;
-  top: 50%;
-  transform: translateY(-50%);
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
   display: flex;
-  flex-direction: column;
-  gap: 9px;
+  flex-direction: row;
+  gap: 10px;
 }
 
 .tb-btn {
@@ -269,28 +311,284 @@ body {
 }
 
 .tb-btn:hover { color: var(--gold-light); border-color: rgba(201, 164, 92, 0.4); }
-.tb-btn.is-on { color: var(--gold-light); border-color: rgba(201, 164, 92, 0.55); background: rgba(201, 164, 92, 0.12); }
+.tb-btn.is-on {
+  color: #1a1408;
+  border-color: transparent;
+  background: linear-gradient(135deg, #e3c98f, #c9a45c);
+  font-weight: 600;
+}
+
+/* ---------------- NFC / 扫码 VR 入口 ---------------- */
+.nfc-panel {
+  position: absolute;
+  z-index: 9;
+  left: 34px;
+  bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  max-width: 360px;
+  cursor: pointer;
+  padding: 13px 16px;
+  border-radius: 15px;
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(160deg, rgba(22, 22, 26, 0.88), rgba(10, 11, 14, 0.92));
+  backdrop-filter: blur(14px);
+  transition: border-color 0.3s;
+}
+
+.nfc-panel:hover { border-color: rgba(201, 164, 92, 0.4); }
+
+.nfc-icon {
+  position: relative;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: radial-gradient(circle at 50% 40%, rgba(201, 164, 92, 0.2), rgba(10, 10, 12, 0.6));
+  color: var(--gold-light);
+}
+
+.nfc-icon svg { width: 19px; height: 19px; }
+
+.nfc-icon::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 164, 92, 0.55);
+  animation: nfcPulse 2.2s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes nfcPulse {
+  0% { transform: scale(0.92); opacity: 0.9; }
+  70% { transform: scale(1.45); opacity: 0; }
+  100% { transform: scale(1.45); opacity: 0; }
+}
+
+.nfc-body { min-width: 0; }
+
+.nfc-line { display: flex; align-items: center; gap: 9px; }
+.nfc-line b {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--gold-light);
+  white-space: nowrap;
+}
+
+.nfc-tag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(201, 164, 92, 0.1);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+}
+
+.nfc-body p {
+  margin: 6px 0 0;
+  font-size: 11.5px;
+  line-height: 1.65;
+  color: #b0aa9e;
+}
+
+.nfc-body p b { color: var(--text); font-weight: 600; }
+
+.nfc-qr {
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  padding: 4px;
+  border-radius: 9px;
+  border: 1px solid var(--line-soft);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(227, 201, 143, 0.82);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+
+
+.nfc-qr svg { display: block; width: 100%; height: 100%; }
+
+/* ---------------- 扫码弹窗 ---------------- */
+.qr-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.qr-modal[hidden] { display: none; }
+
+.qr-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 3, 5, 0.76);
+  backdrop-filter: blur(8px);
+  animation: qrFade 0.3s ease;
+}
+
+@keyframes qrFade { from { opacity: 0; } to { opacity: 1; } }
+
+.qr-card {
+  position: relative;
+  z-index: 1;
+  width: min(360px, 92vw);
+  padding: 26px 26px 22px;
+  border-radius: 20px;
+  border: 1px solid rgba(201, 164, 92, 0.32);
+  background:
+    radial-gradient(ellipse 90% 60% at 50% 0%, rgba(201, 164, 92, 0.16), transparent 70%),
+    linear-gradient(160deg, rgba(24, 22, 18, 0.98), rgba(9, 9, 11, 0.99));
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 50px rgba(201, 164, 92, 0.12);
+  text-align: center;
+  animation: qrPop 0.42s cubic-bezier(0.2, 1.2, 0.35, 1);
+}
+
+@keyframes qrPop {
+  from { opacity: 0; transform: translateY(18px) scale(0.94); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.qr-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--line-soft);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.qr-close:hover { color: var(--gold-light); border-color: rgba(201, 164, 92, 0.5); }
+
+.qr-brand {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.34em;
+  color: var(--gold);
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.qr-card h3 {
+  margin: 10px 0 0;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  background: linear-gradient(100deg, #f6f3ec, #e3c98f 44%, #c9a45c);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.qr-lead {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #a9a396;
+}
+
+.qr-frame {
+  position: relative;
+  width: 208px;
+  height: 208px;
+  margin: 18px auto 0;
+  padding: 10px;
+  border-radius: 18px;
+  border: 1px solid rgba(201, 164, 92, 0.4);
+  background: linear-gradient(150deg, rgba(227, 201, 143, 0.14), rgba(125, 102, 51, 0.06));
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), 0 18px 44px rgba(0, 0, 0, 0.5);
+}
+
+.qr-frame::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 18px;
+  border: 1px solid rgba(227, 201, 143, 0.5);
+  animation: qrPulse 2.6s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes qrPulse {
+  0% { transform: scale(1); opacity: 0.55; }
+  70% { transform: scale(1.05); opacity: 0; }
+  100% { transform: scale(1.05); opacity: 0; }
+}
+
+#qr-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 11px;
+}
+
+.qr-url {
+  margin-top: 14px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+  word-break: break-all;
+  opacity: 0.85;
+}
+
+.qr-steps {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 15px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.qr-steps span {
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--line-soft);
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.qr-steps span b { color: var(--gold-light); font-weight: 600; margin-right: 3px; }
 
 /* ---------------- 底部建筑列表 ---------------- */
 .dock {
   position: absolute;
   z-index: 9;
-  left: 50%;
-  bottom: 22px;
-  transform: translateX(-50%);
-  padding: 12px 18px 14px;
+  right: 34px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 13px 14px;
   border-radius: 16px;
   border: 1px solid var(--line-soft);
   background: linear-gradient(180deg, rgba(20, 20, 24, 0.88), rgba(9, 10, 13, 0.92));
   backdrop-filter: blur(14px);
-  max-width: calc(100vw - 68px);
+  max-height: 62vh;
 }
 
-.dock-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+.dock-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
 .dock-head span { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; color: var(--gold-light); }
 .dock-head em { font-style: normal; font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; color: var(--muted); }
 
-.dock-list { display: flex; gap: 8px; overflow-x: auto; }
+.dock-list { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; max-height: 50vh; }
 
 .dock-item {
   display: flex;
@@ -356,6 +654,9 @@ body {
 /* ---------------- 响应式 ---------------- */
 @media (max-width: 1100px) {
   .info-panel { display: none; }
-  .toolbar { top: auto; bottom: 130px; right: 18px; transform: none; }
-  .dock { left: 18px; right: 18px; transform: none; max-width: none; }
+  .toolbar { left: 18px; right: 18px; bottom: 20px; transform: none; justify-content: center; }
+  .dock { display: none; }
+  .nfc-panel { left: 18px; right: 18px; bottom: 78px; max-width: none; }
+  .nfc-qr { display: none; }
+
 }
