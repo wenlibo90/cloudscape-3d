@@ -309,6 +309,8 @@ body {
   overflow: hidden;
 }
 
+.gesture-view { position: relative; }
+
 .gesture-view video {
   display: block;
   width: 100%;
@@ -316,6 +318,18 @@ body {
   object-fit: cover;
   transform: scaleX(-1);
   background: #05060a;
+}
+
+.gesture-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 132px;
+  object-fit: cover;
+  transform: scaleX(-1);
+  pointer-events: none;
+  z-index: 2;
 }
 
 .gesture-status {
@@ -386,6 +400,49 @@ body {
 
 .toolbar button:active {
   transform: scale(0.97);
+}
+
+/* ---------------- 右下角：网格线稿 ---------------- */
+.wire-btn {
+  position: absolute;
+  right: 34px;
+  bottom: 34px;
+  z-index: 11;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--line-gold);
+  background: rgba(12, 15, 20, 0.78);
+  color: var(--gold-light);
+  font-family: inherit;
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.wire-btn:hover {
+  background: rgba(201, 164, 92, 0.16);
+}
+
+.wire-btn:active {
+  transform: scale(0.96);
+}
+
+.wire-btn.is-on {
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  color: #1a1408;
+  font-weight: 600;
+  border-color: transparent;
+}
+
+@media (max-width: 900px) {
+  .wire-btn {
+    right: 16px;
+    bottom: 92px;
+    padding: 9px 15px;
+    font-size: 11.5px;
+  }
 }
 
 .toolbar button.primary {

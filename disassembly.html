@@ -41,11 +41,14 @@
         </button>
         <div class="gesture-view" id="gesture-view" hidden>
           <video id="gesture-video" playsinline muted></video>
+          <canvas id="gesture-overlay" class="gesture-overlay"></canvas>
           <div class="gesture-status" id="gesture-status">正在开启…</div>
           <button class="gesture-perm" id="gesture-perm" type="button" hidden>申请摄像头权限</button>
           <div class="gesture-tips">握拳 = 拆解 / 还原 · 移动手掌 = 旋转</div>
         </div>
       </div>
+
+      <button id="wire-btn" class="wire-btn" type="button">加载网格线稿</button>
 
       <div class="toolbar">
         <button id="explode-btn" type="button" class="primary">拆解</button>

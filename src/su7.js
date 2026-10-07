@@ -241,14 +241,60 @@ function loadMediaPipe() {
   });
 }
 
+const gestureOverlay = document.getElementById('gesture-overlay');
+const HAND_CONNECTIONS = [
+  [0, 1], [1, 2], [2, 3], [3, 4],
+  [0, 5], [5, 6], [6, 7], [7, 8],
+  [5, 9], [9, 10], [10, 11], [11, 12],
+  [9, 13], [13, 14], [14, 15], [15, 16],
+  [13, 17], [17, 18], [18, 19], [19, 20],
+  [0, 17],
+];
+
+function drawHandOverlay(lm) {
+  if (!gestureOverlay) return;
+  const vw = gestureVideo.clientWidth || 200;
+  const vh = gestureVideo.clientHeight || 132;
+  if (gestureOverlay.width !== vw || gestureOverlay.height !== vh) {
+    gestureOverlay.width = vw;
+    gestureOverlay.height = vh;
+  }
+
+  const ctx = gestureOverlay.getContext('2d');
+  const w = gestureOverlay.width;
+  const h = gestureOverlay.height;
+  ctx.clearRect(0, 0, w, h);
+  if (!lm) return;
+
+  ctx.strokeStyle = 'rgba(227, 201, 143, 0.85)';
+  ctx.lineWidth = Math.max(1.5, w * 0.006);
+  ctx.beginPath();
+  HAND_CONNECTIONS.forEach(([a, b]) => {
+    ctx.moveTo(lm[a].x * w, lm[a].y * h);
+    ctx.lineTo(lm[b].x * w, lm[b].y * h);
+  });
+  ctx.stroke();
+
+  ctx.fillStyle = '#e3c98f';
+  lm.forEach((p, i) => {
+    const r = (i === 4 || i === 8) ? w * 0.018 : w * 0.01;
+    ctx.beginPath();
+    ctx.arc(p.x * w, p.y * h, r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
 function onHandResults(results) {
   const list = results.multiHandLandmarks;
-  if (!list || !list.length) {
+  const lm = list && list.length ? list[0] : null;
+
+  drawHandOverlay(lm);
+
+  if (!lm) {
     lastFist = false;
     return;
   }
 
-  const lm = list[0];
   gestureTargetRotY = (lm[9].x - 0.5) * Math.PI * 2;
   controls.autoRotate = false;
 
